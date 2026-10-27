@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Week 8 Study Lab: MAS & Okun's Law</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: exam-pad graph paper; week switch + sticky tab strip; each tab is one study mode, diagrams left / controls right, stacking on phones */
+:root{
+  --paper:#F3F6F8; --grid:#E2E8EC; --surface:#FFFFFF; --ink:#14212B; --muted:#56666F; --line:#C9D3D9;
+  --accent:#2346B8; --accent-soft:#E3E9FB; --ad:#C2410C; --sl:#0F7B6C; --mark:#F6DC55; --mark-ink:#3B3000;
+  --good:#157F4F; --good-soft:#E1F3EA; --bad:#B42318; --bad-soft:#FBE7E5;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E151A; --grid:#18222A; --surface:#141D23; --ink:#E5ECF0; --muted:#92A2AC; --line:#2A3843;
+  --accent:#86A2FF; --accent-soft:#1B2645; --ad:#FB8D52; --sl:#43C7B2; --mark:#E7C93B; --mark-ink:#2A2200;
+  --good:#53C58E; --good-soft:#12291F; --bad:#F2796E; --bad-soft:#2E1715; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E151A; --grid:#18222A; --surface:#141D23; --ink:#E5ECF0; --muted:#92A2AC; --line:#2A3843;
+  --accent:#86A2FF; --accent-soft:#1B2645; --ad:#FB8D52; --sl:#43C7B2; --mark:#E7C93B; --mark-ink:#2A2200;
+  --good:#53C58E; --good-soft:#12291F; --bad:#F2796E; --bad-soft:#2E1715; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.lt{font-style:normal}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1080px;margin:0 auto}
+header{padding-block:24px 12px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.05;margin:6px 0 8px;text-wrap:balance}
+h1 mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:3px}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.weeks{display:inline-flex;border:1px solid var(--ink);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.weeks button{font:700 14px var(--f-mono);letter-spacing:.04em;padding:8px 16px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.weeks button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:10px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tab{flex:0 0 auto;font:600 14px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-family:var(--f-display);font-weight:700;font-size:26px;margin:0 0 4px;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 18px;max-width:68ch}
+.lab{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:820px){.lab{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+svg.chart{width:100%;height:auto;display:block}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--muted)}
+svg .lbl{font-family:var(--f-body);font-weight:700;font-size:14px}
+.ctrl{display:grid;gap:6px;margin-bottom:14px}
+.ctrl label{font-weight:700;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.ctrl label span{font-family:var(--f-mono);font-weight:400;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:15px var(--f-body);padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:6px;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.btn{font:700 14px var(--f-body);padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.small{font-size:13px;padding:6px 10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pulse{box-shadow:0 0 0 3px var(--mark)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.seg button{font:700 14px var(--f-body);padding:8px 14px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.note{border-left:3px solid var(--accent);padding:8px 12px;background:var(--accent-soft);font-size:15px;margin-bottom:14px}
+.note.warn{border-color:var(--ad)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat b{display:block;font-family:var(--f-mono);font-size:20px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400;text-transform:uppercase;letter-spacing:.05em}
+td.num{font-family:var(--f-mono)}
+.think{margin-top:18px}
+.think summary{cursor:pointer;font-weight:700}
+.think p{margin:8px 0 0;color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--grid);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ad);transition:width .3s}
+.eq{font-family:var(--f-mono);font-size:clamp(15px,2.6vw,20px);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:nowrap;margin:0 0 14px}
+.eq .t1{color:var(--ad)} .eq .t2{color:var(--sl)} .eq .t3{color:var(--accent)}
+.decomp{font-family:var(--f-mono);font-size:15px;font-variant-numeric:tabular-nums;display:grid;gap:4px;margin-bottom:14px}
+.decomp div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding-block:2px}
+.decomp div:last-child{border-bottom:0;font-weight:600;color:var(--ink)}
+/* notes */
+.notes{display:grid;gap:16px}
+.ncard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.ncard ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.ncard p{margin:6px 0}
+.ncard .tag{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:720px){.twocol{grid-template-columns:1fr}}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+.chain span{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:700}
+.chain i{font-style:normal;color:var(--muted)}
+.chain .loop{background:var(--mark);color:var(--mark-ink)}
+.keygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}
+.keyrow{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:start;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--paper)}
+.keyrow b{font-family:var(--f-mono);font-size:18px;color:var(--accent);line-height:1.3}
+.keyrow span{font-size:14px}
+.keyrow small{display:block;color:var(--muted);font-size:12px}
+.plain{font-size:17px;max-width:68ch}
+.plain p{margin:8px 0}
+.eg{background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:15px}
+.eg b.l{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.oneline{background:var(--mark);color:var(--mark-ink);border-radius:6px;padding:6px 10px;font-weight:700;display:inline-block;margin-top:6px}
+/* flashcards */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{font:600 13px var(--f-body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.cardzone{perspective:1200px;max-width:640px}
+.fcard{position:relative;min-height:270px;cursor:pointer;transform-style:preserve-3d;transition:transform .45s}
+.fcard.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:10px;overflow:auto}
+.face.back{transform:rotateY(180deg);border-color:var(--accent)}
+.face .topic{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.face .term{font-family:var(--f-display);font-size:28px;font-weight:700;line-height:1.15;text-wrap:balance}
+.face .def{font-size:17px}
+.hint{color:var(--muted);font-size:13px}
+.progress{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin:12px 0}
+@media (prefers-reduced-motion:reduce){.fcard{transition:none}}
+/* quiz + sort */
+.q{max-width:720px}
+.qnum{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.qtext{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.25;margin:6px 0 14px;text-wrap:balance}
+.opts{display:grid;gap:8px}
+.opts.grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.opt{text-align:left;font:16px var(--f-body);padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.fb{margin-top:14px;padding:12px 14px;border-radius:8px;font-size:15px}
+.fb.right{background:var(--good-soft);border:1px solid var(--good)}
+.fb.wrong{background:var(--bad-soft);border:1px solid var(--bad)}
+.fb strong{display:block;margin-bottom:2px}
+.score{font-family:var(--f-display);font-size:48px;font-weight:700}
+.statement{font-size:19px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;margin:8px 0 14px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--ad) 0 4px,transparent 4px 7px)!important}
+</style>
+<style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow" id="hdrEyebrow">Macroeconomics · Week six</div>
+  <h1 id="hdrTitle">The labour market &amp; the <mark>SRAS</mark></h1>
+  <p class="lede" id="hdrLede">Move the diagrams yourself, then test what stuck. Start with the two labs, then use the flashcards, sorting rounds and quiz to revise.</p>
+</header>
+<nav>
+  <div class="tabs" role="tablist" data-week="8">
+    <button class="tab" role="tab" data-tab="w8simple">Simple explainer</button>
+    <button class="tab" role="tab" data-tab="w8notes">Notes summary</button>
+    <button class="tab" role="tab" data-tab="w8mas">MAS lab</button>
+    <button class="tab" role="tab" data-tab="w8exp">Expectations lab</button>
+    <button class="tab" role="tab" data-tab="w8okun">Okun's law lab</button>
+    <button class="tab" role="tab" data-tab="w8cards">Flashcards</button>
+    <button class="tab" role="tab" data-tab="w8sort">Sorting rounds</button>
+    <button class="tab" role="tab" data-tab="w8quiz">Quiz</button>
+  </div>
+</nav>
+
+<section id="w8simple" role="tabpanel" data-week="8" hidden>
+  <h2>Week Eight, explained simply</h2>
+  <p class="sub">No jargon you haven't been told about first. Read it top to bottom. The symbol key is first, so you can scroll back to it whenever a letter confuses you.</p>
+  <div class="notes">
+
+    <div class="ncard">
+      <div class="tag">Symbol key</div>
+      <h3>What every letter means</h3>
+      <div class="keygrid">
+        <div class="keyrow"><b>π</b><span>Inflation: how fast prices are rising each year, in %.<small>Greek "pi"</small></span></div>
+        <div class="keyrow"><b>πᵉ</b><span>Expected inflation: how fast people <em>think</em> prices will rise.<small>"pi e", where e = expected</small></span></div>
+        <div class="keyrow"><b>P</b><span>The price level: how expensive things are overall.</span></div>
+        <div class="keyrow"><b>Pᵉ</b><span>The price level people expect.</span></div>
+        <div class="keyrow"><b>W</b><span>Wages: what workers are paid in euro (nominal wages).</span></div>
+        <div class="keyrow"><b>μ</b><span>Mark-up: the extra a firm adds on top of its wage costs when setting prices.<small>Greek "mu"</small></span></div>
+        <div class="keyrow"><b>z</b><span>Worker power and rules: unions, wage bargaining, minimum wage laws.</span></div>
+        <div class="keyrow"><b>U</b><span>The unemployment rate, in %.</span></div>
+        <div class="keyrow"><b>α</b><span>How much unemployment cools inflation. Big α means a strong effect.<small>Greek "alpha"</small></span></div>
+        <div class="keyrow"><b>λ</b><span>How quickly people change their guesses about inflation, from 0 (never) to 1 (straight away).<small>Greek "lambda"</small></span></div>
+        <div class="keyrow"><b>t, t−1</b><span>This year and last year.</span></div>
+        <div class="keyrow"><b>Y</b><span>What the economy actually produces (real GDP).</span></div>
+        <div class="keyrow"><b>Y<sub>F</sub></b><span>Potential GDP: what the economy can produce sustainably.<small>F = full capacity</small></span></div>
+        <div class="keyrow"><b>U<sub>F</sub></b><span>Normal unemployment when the economy is at potential. Also called the NAIRU.</span></div>
+        <div class="keyrow"><b>β</b><span>Okun's coefficient: how much unemployment changes when output changes.<small>Greek "beta"</small></span></div>
+        <div class="keyrow"><b>MAS</b><span>Modified Aggregate Supply: the week's main equation.</span></div>
+        <div class="keyrow"><b>NAIRU</b><span>Non-Accelerating Inflation Rate of Unemployment: the unemployment rate where inflation stays steady.</span></div>
+        <div class="keyrow"><b>SRAS / AD</b><span>Short run aggregate supply and aggregate demand, from Week 6.</span></div>
+      </div>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">The big picture</div>
+      <h3>This week answers two questions</h3>
+      <p><b>1. What makes inflation go up or down?</b> The answer is the MAS equation.</p>
+      <p><b>2. How is unemployment linked to how much the economy produces?</b> The answer is Okun's law.</p>
+      <p>Put them together and you get a chain: <b>more output → fewer people unemployed → higher inflation</b>.</p>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 1</div>
+      <h3>Prices are wages plus a bit extra</h3>
+      <p>A firm works out what its workers cost, then adds something on top to make a profit. That "something on top" is the <b>mark-up (μ)</b>.</p>
+      <p class="eq" style="font-size:16px">P = (1 + μ) × W</p>
+      <div class="eg"><b class="l">Example</b>Baking a cake costs a bakery €10 in wages. It adds a 20% mark-up (μ = 0.2), so it charges €12.</div>
+      <p>The mark-up is <b>smaller when there's lots of competition</b>. If there are five bakeries on the street, none of them can charge much extra or customers go next door.</p>
+      <span class="oneline">If wages go up, prices go up.</span>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 2</div>
+      <h3>What decides wages?</h3>
+      <p class="eq" style="font-size:16px">W = Pᵉ × (1 − αU + z)</p>
+      <p>Read it as three plain ideas:</p>
+      <ul>
+        <li><b>Pᵉ:</b> if workers expect prices to rise, they ask for more pay so they can still afford the same things.</li>
+        <li><b>−αU:</b> if lots of people are unemployed, workers can't push for much, because someone else would take the job. Wages stay down.</li>
+        <li><b>+z:</b> strong unions and minimum wage laws push wages up.</li>
+      </ul>
+      <span class="oneline">Expected prices and worker power push wages up. Unemployment holds them down.</span>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 3: the main equation</div>
+      <h3>The MAS equation in plain words</h3>
+      <p>Put steps 1 and 2 together and turn "prices" into "how fast prices rise" (inflation). You get:</p>
+      <p class="eq">π = <span class="t1">πᵉ</span> + <span class="t2">(μ + z)</span> − <span class="t3">αU</span></p>
+      <p><b>This year's inflation</b> = <span style="color:var(--ad);font-weight:700">what people expected</span> + <span style="color:var(--sl);font-weight:700">a push from business mark-ups and worker power</span> − <span style="color:var(--accent);font-weight:700">a cooling effect from unemployment</span>.</p>
+      <div class="eg"><b class="l">Worked example</b>People expect 2% inflation (πᵉ = 2). Mark-up and worker power add 3 (μ + z = 3). Unemployment is 6% and α = 0.5, so unemployment takes away 0.5 × 6 = 3.<br><b>π = 2 + 3 − 3 = 2%.</b> Inflation matches what people expected, so nothing changes. That makes 6% the NAIRU here.</div>
+      <div class="eg"><b class="l">Now unemployment falls to 4%</b>Unemployment only takes away 0.5 × 4 = 2.<br><b>π = 2 + 3 − 2 = 3%.</b> Lower unemployment means higher inflation.</div>
+      <p>You don't need to be able to derive this equation, only understand and use it. You can try it in the MAS lab tab.</p>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 4</div>
+      <h3>Why people's guesses matter so much</h3>
+      <p>The first part of the equation, πᵉ, is just people's guess about inflation. Guesses matter because they change behaviour:</p>
+      <ul>
+        <li><b>Workers</b> who expect prices to rise ask for bigger pay rises.</li>
+        <li><b>Firms</b> that expect costs to rise put their prices up early, and assume their rivals will too.</li>
+      </ul>
+      <p>So expecting inflation helps <em>cause</em> inflation. If this keeps looping, it's called a <b>wage-price spiral</b>:</p>
+      <div class="chain"><span>Prices rose</span><i>→</i><span>People expect more rises</span><i>→</i><span>Workers want more pay</span><i>→</i><span>Firms' costs go up</span><i>→</i><span>Firms raise prices</span><i>→</i><span class="loop">↻ repeat</span></div>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 5</div>
+      <h3>How people make their guesses</h3>
+      <p>The notes use <b>adaptive expectations</b>: people look at what happened recently and adjust their guess a bit.</p>
+      <p class="eq" style="font-size:16px">πᵉ<sub>t</sub> = πᵉ<sub>t−1</sub> + λ(π<sub>t</sub> − πᵉ<sub>t−1</sub>)</p>
+      <p>In words: <b>new guess = old guess + λ × (how wrong the old guess was)</b>.</p>
+      <div class="eg"><b class="l">Example</b>You guessed 2% inflation last year, but it turned out to be 6%. You were 4 points too low.<br>If λ = 0.5, you add half your mistake: new guess = 2 + 0.5 × 4 = <b>4%</b>.<br>If λ = 0, you ignore the mistake and still guess <b>2%</b>.<br>If λ = 1, you add the whole mistake and now guess <b>6%</b>.</div>
+      <ul>
+        <li><b>Inflation inertia:</b> once people expect high inflation, it keeps going even after the original cause has disappeared.</li>
+        <li><b>Credibility:</b> if everyone trusts the central bank to hit its target, guesses stay at the target (they're "anchored"), and inflation stays low more easily.</li>
+      </ul>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 6</div>
+      <h3>The minimum wage: two stories</h3>
+      <div class="twocol">
+        <div class="eg" style="margin:0"><b class="l">Story A: cost-push (theory)</b>Firms have to pay more, so they raise prices and produce less. SRAS shifts left. <b>Prices go up and output goes down.</b></div>
+        <div class="eg" style="margin:0"><b class="l">Story B: demand-pull (evidence)</b>Lower-paid workers get more money and spend it. AD shifts right. <b>Prices go up and output goes up.</b></div>
+      </div>
+      <p>Real-world evidence mostly supports Story B. The price effect is small, because better-paid workers are more productive and firms sell more.</p>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 7</div>
+      <h3>History in four lines</h3>
+      <ul>
+        <li><b>1950s:</b> people's guesses never changed (λ ≈ 0). Lower unemployment reliably meant a bit more inflation.</li>
+        <li><b>1970s:</b> guesses kept going up (λ ≈ 1). Inflation stayed high even when unemployment rose, and wage-price spirals broke out.</li>
+        <li><b>The fix:</b> governments agreed limits on pay rises with unions, and central banks raised interest rates a lot.</li>
+        <li><b>1990s onwards:</b> central banks announced a 2% inflation target and explained their decisions openly. People trusted it, and inflation became low and steady.</li>
+      </ul>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Step 8</div>
+      <h3>Okun's law: output and jobs</h3>
+      <p>When the economy produces more, firms need more workers, so unemployment falls. When it produces less, firms let people go.</p>
+      <p class="eq" style="font-size:16px">U − U<sub>F</sub> = −β(Y − Y<sub>F</sub>)</p>
+      <p>In words: <b>how far unemployment is from normal = −β × how far output is from potential</b>. The minus sign just means they move in opposite directions.</p>
+      <div class="eg"><b class="l">Example</b>Normal unemployment is 5% and β = 0.5. The economy is producing 2% <em>below</em> potential.<br>U − 5 = −0.5 × (−2) = +1, so <b>unemployment is 6%</b>.</div>
+      <p><b>The NAIRU (U<sub>F</sub>)</b> is the "normal" unemployment rate when the economy is at potential. At that rate, inflation stays steady.</p>
+      <p><b>β is usually small.</b> Output and unemployment don't move one-for-one, because:</p>
+      <ul>
+        <li>Firms keep staff in bad times, expecting things to pick up (labour hoarding).</li>
+        <li>Firms cut hours instead of jobs.</li>
+        <li>Some people give up looking for work, so they stop counting as unemployed (discouraged workers).</li>
+        <li>Firms get more productive, so they need fewer new hires.</li>
+        <li>The jobs being created need different skills from the people looking for work (skill mismatch).</li>
+        <li>Welfare payments can make some people less keen to take a job.</li>
+      </ul>
+      <p>Okun's law is something economists <em>observed</em> in the data, not a theory, and it's mainly about the short to medium term.</p>
+    </div>
+
+    <div class="ncard plain">
+      <div class="tag">Wrap-up</div>
+      <h3>The whole week in four sentences</h3>
+      <ul>
+        <li>Inflation = expected inflation + business and worker power − the cooling effect of unemployment (the MAS).</li>
+        <li>People's guesses about inflation help cause inflation, so a trusted central bank matters.</li>
+        <li>More output means less unemployment, but not one-for-one (Okun's law).</li>
+        <li>Chain them together: <b>more output → less unemployment → more inflation</b>. That's why the SRAS slopes upward.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="w8notes" role="tabpanel" data-week="8" hidden>
+  <h2>Week Eight in brief</h2>
+  <p class="sub">The notes build one equation linking inflation to unemployment (the MAS), then one linking unemployment to GDP (Okun's law). Together they complete the SRAS story.</p>
+  <div class="notes">
+    <div class="ncard">
+      <div class="tag">1 · Where the MAS comes from</div>
+      <h3>Wage and price setting</h3>
+      <ul>
+        <li>Workers want the highest wage their skills allow. Firms want to pay as little as possible while still getting the skills they need.</li>
+        <li>Prices are a mark-up on wages: <b>P = (1 + μ)W</b>, where μ is the mark-up.</li>
+        <li>Wages depend on expected prices, unemployment and labour market institutions: <b>W = Pᵉ(1 − αU + z)</b>.</li>
+        <li>Substitute, convert from price levels to inflation rates, and you get the <b>Modified Aggregate Supply (MAS) equation</b>. You don't need to reproduce the derivation, but you do need to understand and apply the result.</li>
+      </ul>
+      <p class="eq" style="margin-top:12px">π<sub>t</sub> = <span class="t1">π<sup>e</sup></span> + <span class="t2">(μ + z)</span> − <span class="t3">αU<sub>t</sub></span></p>
+      <div class="legend"><span><i style="background:var(--ad)"></i>Expected inflation</span><span><i style="background:var(--sl)"></i>Mark-up + labour market institutions</span><span><i style="background:var(--accent)"></i>Unemployment × sensitivity α</span></div>
+    </div>
+
+    <div class="twocol">
+      <div class="ncard">
+        <div class="tag">2a · Expected inflation (πᵉ)</div>
+        <h3>Expectations feed into today's inflation</h3>
+        <ul>
+          <li><b>Wage setting:</b> workers who've seen high inflation expect more, so they demand higher nominal wages to protect their purchasing power. Unit labour costs rise and firms raise prices.</li>
+          <li><b>Price setting:</b> firms build expected cost rises into today's prices. They're confident rivals will do the same, and they'll pay menu costs rather than fall behind.</li>
+          <li>This can become a <b>wage-price spiral</b>. These were common in the 1970s and are rarer now because central banks operate differently.</li>
+        </ul>
+        <div class="chain"><span>Past inflation</span><i>→</i><span>Higher expectations</span><i>→</i><span>Higher wage demands</span><i>→</i><span>Higher costs</span><i>→</i><span>Higher prices</span><i>→</i><span class="loop">↻ back to expectations</span></div>
+      </div>
+      <div class="ncard">
+        <div class="tag">2b · How expectations form</div>
+        <h3>Adaptive expectations</h3>
+        <p class="eq">π<sup>e</sup><sub>t</sub> = π<sup>e</sup><sub>t−1</sub> + λ(π<sub>t</sub> − π<sup>e</sup><sub>t−1</sub>)</p>
+        <ul>
+          <li>People update last year's forecast by a fraction λ (between 0 and 1) of their forecast error.</li>
+          <li><b>λ = 0:</b> expectations never move (the 1950s). <b>λ close to 1:</b> people expect last year's inflation again (the 1970s onwards).</li>
+          <li><b>Why it matters:</b> inflation inertia (inflation persists after its cause is gone), the monetary policy challenge (unanchored expectations are costly to break) and central bank credibility (a believed target anchors expectations).</li>
+          <li>Rational expectations use all available information, but past inflation is still an important part of it.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ncard">
+      <div class="tag">2c · Mark-up and institutions (μ + z)</div>
+      <h3>Competition, institutions and the minimum wage</h3>
+      <ul>
+        <li><b>More competition means a lower mark-up μ</b>. Firms chase volume rather than higher prices, so the price level is lower.</li>
+        <li><b>z</b> covers labour market structures (bargaining, minimum wage laws) that keep wages, and therefore prices, higher.</li>
+        <li><b>Theory:</b> a higher minimum wage raises firms' costs. SRAS shifts left (A → B): <b>cost-push inflation</b>, with higher prices and lower output.</li>
+        <li><b>Evidence:</b> the cost-push effect is very small. Higher pay raises productivity, and poorer households spend the extra income, so AD shifts right: <b>demand-pull inflation</b>, with higher prices and higher output.</li>
+      </ul>
+      <div class="twocol" style="margin-top:12px">
+        <div><svg class="chart" id="nCost" viewBox="0 0 560 370" role="img" aria-label="Cost-push inflation: SRAS shifts left"></svg><p class="hint" style="text-align:center">Cost-push: SRAS shifts left, A → B</p></div>
+        <div><svg class="chart" id="nDemand" viewBox="0 0 560 370" role="img" aria-label="Demand-pull inflation: AD shifts right"></svg><p class="hint" style="text-align:center">Demand-pull: AD shifts right, A → B</p></div>
+      </div>
+    </div>
+
+    <div class="twocol">
+      <div class="ncard">
+        <div class="tag">2d · Current unemployment (−αU)</div>
+        <h3>Higher unemployment, lower inflation</h3>
+        <ul>
+          <li>GDP falls → unemployment rises → AD falls → firms are left with unsold stock → they cut prices.</li>
+          <li>α measures how much inflation changes when unemployment changes.</li>
+          <li>The link can fail: prices are sticky, and high expectations can keep inflation up even while unemployment rises.</li>
+        </ul>
+      </div>
+      <div class="ncard">
+        <div class="tag">History</div>
+        <h3>From stable to broken and back</h3>
+        <ul>
+          <li><b>1950s:</b> a stable inflation–unemployment trade-off. Expectations were constant (λ ≈ 0).</li>
+          <li><b>1970s:</b> λ ≈ 1. Rising expectations kept inflation high even as unemployment rose. The relationship broke down and wage-price spirals and strikes followed.</li>
+          <li><b>The fix:</b> social contracts capped wage rises, and central banks raised interest rates sharply.</li>
+          <li><b>1990s on:</b> inflation targeting, eventually 2%, with more transparent central banks. Inflation became low and stable, and the old relationship reappeared.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ncard">
+      <div class="tag">3 · Unemployment and GDP</div>
+      <h3>Okun's law (Arthur Okun, 1962)</h3>
+      <p class="eq">U<sub>t</sub> − U<sub>F</sub> = −β(Y<sub>t</sub> − Y<sub>F</sub>)</p>
+      <ul>
+        <li>An observed (empirical, not theoretical) inverse link: output above potential means unemployment below its natural rate. In this version, causality runs from Y to U.</li>
+        <li><b>U<sub>F</sub></b> is unemployment at potential GDP: the natural rate, or <b>NAIRU</b> (non-accelerating inflation rate of unemployment), where inflation is stable.</li>
+        <li><b>β (Okun's coefficient)</b> is usually small, well below one-for-one. The reasons: social welfare, labour hoarding, cutting hours instead of jobs, discouraged workers leaving the labour force, productivity gains and skill mismatches.</li>
+        <li>It's a short-to-medium-term, cyclical relationship. It doesn't hold for long-run structural change, and it varies across economies and time.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="w8mas" role="tabpanel" data-week="8" hidden>
+  <h2>Play with the MAS equation</h2>
+  <p class="sub">Each slider is one term in the equation. The line shows inflation at every unemployment rate, given the other terms. Raise expected inflation and the whole line shifts up, which is what happened in the 1970s.</p>
+  <div class="lab">
+    <div class="panel"><svg class="chart" id="masSvg" viewBox="0 0 560 370" role="img" aria-label="Inflation against unemployment from the MAS"></svg>
+      <div class="legend"><span><i style="background:var(--accent)"></i>MAS line now</span><span><i style="background:var(--line)"></i>Starting line</span><span><i class="dash"></i>Expected inflation</span></div>
+    </div>
+    <div class="panel">
+      <p class="eq" style="font-size:16px">π = <span class="t1">π<sup>e</sup></span> + <span class="t2">(μ+z)</span> − <span class="t3">αU</span></p>
+      <div class="ctrl"><label for="mPe">Expected inflation πᵉ <span id="mPeL"></span></label><input type="range" id="mPe" min="0" max="10" step="0.5" value="2"></div>
+      <div class="ctrl"><label for="mMz">Mark-up + institutions μ+z <span id="mMzL"></span></label><input type="range" id="mMz" min="0" max="8" step="0.5" value="3"></div>
+      <div class="ctrl"><label for="mA">Sensitivity α <span id="mAL"></span></label><input type="range" id="mA" min="0.1" max="1.5" step="0.05" value="0.5"></div>
+      <div class="ctrl"><label for="mU">Unemployment U <span id="mUL"></span></label><input type="range" id="mU" min="1" max="15" step="0.5" value="6"></div>
+      <div class="decomp" id="mDecomp"></div>
+      <div class="note" id="mNote"></div>
+      <div class="btns">
+        <button class="btn small" data-preset="base">Reset</button>
+        <button class="btn small" data-preset="70s">1970s: expectations soar</button>
+        <button class="btn small" data-preset="minw">Higher minimum wage (z↑)</button>
+        <button class="btn small" data-preset="comp">More competition (μ↓)</button>
+        <button class="btn small" data-preset="boom">Jobs boom (U↓)</button>
+      </div>
+    </div>
+  </div>
+  <details class="think"><summary>Check yourself: why can inflation rise even when unemployment is rising?</summary>
+    <p>If expected inflation rises faster than the −αU term falls, actual inflation still goes up. That's the 1970s story: unemployment rose, but expectations rose more, so the old trade-off broke down.</p></details>
+  <details class="think"><summary>Check yourself: what's special about the NAIRU point on the chart?</summary>
+    <p>At the NAIRU, actual inflation equals expected inflation, so expectations don't need revising and inflation is stable. Below the NAIRU, inflation beats expectations and they get revised up. Above it, the reverse happens.</p></details>
+</section>
+
+<section id="w8exp" role="tabpanel" data-week="8" hidden>
+  <h2>Watch expectations adapt</h2>
+  <p class="sub">A 15-year simulation. Each year actual inflation comes from the MAS, then people update expected inflation using the adaptive rule. Compare λ = 0 (the 1950s) with λ = 1 (the 1970s).</p>
+  <div class="lab">
+    <div class="panel"><svg class="chart" id="expSvg" viewBox="0 0 560 370" role="img" aria-label="Actual and expected inflation over time"></svg>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Actual inflation π</span><span><i class="dash"></i>Expected inflation πᵉ</span><span><i style="background:var(--good)"></i>2% target</span></div>
+    </div>
+    <div class="panel">
+      <div class="ctrl"><label for="eScen">Scenario</label>
+        <select id="eScen">
+          <option value="boom">Demand boom: unemployment below NAIRU for 4 years</option>
+          <option value="tight">Boom, then the central bank raises rates</option>
+          <option value="energy">Energy shock: costs (μ+z) up for 2 years</option>
+        </select></div>
+      <div class="ctrl"><label for="eLam">Adjustment coefficient λ <span id="eLamL"></span></label><input type="range" id="eLam" min="0" max="1" step="0.05" value="0.5"></div>
+      <label class="check"><input type="checkbox" id="eAnch"> Credible central bank: expectations anchored at 2%</label>
+      <div class="btns" style="margin-top:10px"><button class="btn small" id="eL0">λ = 0 (1950s)</button><button class="btn small" id="eL1">λ = 1 (1970s)</button></div>
+      <div class="stats">
+        <div class="stat"><small>Peak inflation</small><b id="ePeak">–</b></div>
+        <div class="stat"><small>Inflation in year 15</small><b id="eEnd">–</b></div>
+        <div class="stat"><small>Years above 3%</small><b id="eYrs">–</b></div>
+      </div>
+      <div class="note" id="eNote"></div>
+    </div>
+  </div>
+  <details class="think"><summary>Check yourself: what is inflation inertia?</summary>
+    <p>With λ near 1, inflation stays high after the boom ends, because people now expect it. The original cause has gone but the expectations remain built into wages and prices.</p></details>
+  <details class="think"><summary>Check yourself: why does central bank credibility matter so much?</summary>
+    <p>Tick the credible central bank box. Expectations stay at 2%, so a temporary shock causes only temporary inflation. Without credibility, bringing inflation down means holding unemployment high for years. Try the tightening scenario to see that cost.</p></details>
+</section>
+
+<section id="w8okun" role="tabpanel" data-week="8" hidden>
+  <h2>Okun's law calculator</h2>
+  <p class="sub">Set the output gap and see what happens to unemployment. Then switch on the real-world reasons why Okun's coefficient is small and watch the line flatten.</p>
+  <div class="lab">
+    <div class="panel"><svg class="chart" id="okSvg" viewBox="0 0 560 370" role="img" aria-label="Okun's law: unemployment against the output gap"></svg>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Okun line now</span><span><i style="background:var(--line)"></i>One-for-one (β = 1)</span></div>
+    </div>
+    <div class="panel">
+      <p class="eq" style="font-size:16px">U − U<sub>F</sub> = −β(Y − Y<sub>F</sub>)</p>
+      <div class="ctrl"><label for="oGap"><i class="lt">Output gap Y − Y<sub>F</sub></i> <span id="oGapL"></span></label><input type="range" id="oGap" min="-6" max="6" step="0.5" value="-3"></div>
+      <div class="ctrl"><label for="oUF"><i class="lt">NAIRU U<sub>F</sub></i> <span id="oUFL"></span></label><input type="range" id="oUF" min="3" max="10" step="0.5" value="5"></div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">Why β is small (each one weakens the link)</div>
+      <div id="oReasons"></div>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><small>Okun's β</small><b id="oBeta">–</b></div>
+        <div class="stat"><small>Unemployment</small><b id="oU">–</b></div>
+        <div class="stat"><small>Inflation (via MAS)</small><b id="oPi">–</b></div>
+      </div>
+      <div class="note" id="oNote"></div>
+    </div>
+  </div>
+  <details class="think"><summary>Check yourself: how do Okun's law and the MAS fit together?</summary>
+    <p>Okun's law takes you from GDP to unemployment. The MAS takes you from unemployment to inflation. Chain them together and you're back to the SRAS: higher output means higher inflation. The third box uses the MAS with πᵉ = 2%, μ+z = 3 and α = 0.6 at the NAIRU you set.</p></details>
+  <details class="think"><summary>Check yourself: why does labour hoarding make β smaller?</summary>
+    <p>In a downturn, firms keep underused staff because they expect a recovery. Output falls, but measured unemployment barely rises.</p></details>
+</section>
+
+<section id="w8cards" role="tabpanel" data-week="8" hidden>
+  <h2>Flashcards</h2>
+  <p class="sub">Tap the card (or press space) to flip it. Mark each one, and the cards you get wrong come back around.</p>
+  <div id="fc8"></div>
+</section>
+<section id="w8sort" role="tabpanel" data-week="8" hidden>
+  <h2>Sorting rounds</h2>
+  <p class="sub">Put each scenario into the right category. Choose a round:</p>
+  <div id="so8"></div>
+</section>
+<section id="w8quiz" role="tabpanel" data-week="8" hidden>
+  <h2>Quiz</h2>
+  <p class="sub">Sixteen exam-style questions on the MAS, expectations and Okun's law, each with an explanation.</p>
+  <div id="qz8"></div>
+</section>
+</div>
+<script>
+
+const store={get(k,d){try{const v=localStorage.getItem('w6_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('w6_'+k,JSON.stringify(v))}catch(e){}}};
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function S(tag,a,parent,text){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function animate(from,to,ms,step,done){if(reduce){step(to);done&&done();return}const t0=performance.now();function f(t){const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;step(from+(to-from)*e);if(p<1)requestAnimationFrame(f);else done&&done()}requestAnimationFrame(f)}
+function esc(s){return s.replace(/'/g,"&#39;")}
+
+/* ---------- weeks + tabs ---------- */
+const HDR={
+ 6:{eyebrow:'Macroeconomics · Week six',title:'The labour market &amp; the <mark>SRAS</mark>',lede:'Move the diagrams yourself, then test what stuck. Start with the two labs, then use the flashcards, sorting rounds and quiz to revise.',first:'sras'},
+ 8:{eyebrow:'Macroeconomics · Week eight',title:'The MAS, the <mark>Phillips curve</mark> &amp; Okun\'s law',lede:'Start with the simple explainer, then the notes summary. Try the three labs, then revise with the flashcards, sorting rounds and quiz.',first:'w8simple'}
+};
+const allTabs=[...document.querySelectorAll('.tab')];
+function weekOf(tab){return document.getElementById(tab).dataset.week}
+function showTab(id){
+  const wk=weekOf(id);
+  document.querySelectorAll('.weeks button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.week===wk));
+  document.querySelectorAll('.tabs').forEach(t=>t.hidden=t.dataset.week!==wk);
+  allTabs.forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===id));
+  document.querySelectorAll('section[role=tabpanel]').forEach(s=>s.hidden=s.id!==id);
+  const h=HDR[wk];$('hdrEyebrow').textContent=h.eyebrow.replace(/&amp;/g,'&');$('hdrTitle').innerHTML=h.title;$('hdrLede').textContent=h.lede;
+  store.set('tab',id);store.set('tab'+wk,id);
+}
+allTabs.forEach(t=>t.onclick=()=>showTab(t.dataset.tab));
+document.querySelectorAll('.weeks button').forEach(b=>b.onclick=()=>{const wk=b.dataset.week;const last=store.get('tab'+wk,HDR[wk].first);showTab(document.getElementById(last)?last:HDR[wk].first)});
+
+/* ---------- chart helpers ---------- */
+function axes(svg,xl,yl){S('line',{x1:50,y1:330,x2:540,y2:330,stroke:'var(--ink)','stroke-width':1.2},svg);S('line',{x1:50,y1:330,x2:50,y2:12,stroke:'var(--ink)','stroke-width':1.2},svg);S('text',{x:540,y:352,'text-anchor':'end'},svg,xl);S('text',{x:58,y:22},svg,yl)}
+function scale(d0,d1,r0,r1){return v=>r0+(v-d0)/(d1-d0)*(r1-r0)}
+
+/* ---------- generic: flashcards ---------- */
+function makeFlashcards(root,CARDS,key){
+  root.innerHTML=`<div class="chips"></div><div class="cardzone"><div class="fcard" tabindex="0" role="button" aria-label="Flip card"><div class="face front"><div class="topic"></div><div class="term"></div><div class="hint">Tap to reveal</div></div><div class="face back"><div class="topic"></div><div class="def"></div></div></div><div class="progress"></div><div class="btns"><button class="btn" data-a="again">Again</button><button class="btn primary" data-a="got">Got it</button><button class="btn" data-a="shuffle">Shuffle</button><button class="btn" data-a="reset">Reset progress</button></div></div>`;
+  const q=s=>root.querySelector(s),card=q('.fcard');
+  const topics=['All',...new Set(CARDS.map(c=>c[0]))];
+  let topic=store.get(key+'Topic','All');if(!topics.includes(topic))topic='All';
+  let known=new Set(store.get(key+'Known',[])),queue=[],qi=0;
+  const inTopic=i=>topic==='All'||CARDS[i][0]===topic;
+  function chips(){const c=q('.chips');c.innerHTML='';topics.forEach(t=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.setAttribute('aria-pressed',t===topic);b.onclick=()=>{topic=t;store.set(key+'Topic',t);chips();build()};c.appendChild(b)})}
+  function build(sh){const ids=CARDS.map((c,i)=>i).filter(inTopic);const unk=ids.filter(i=>!known.has(i));const base=unk.length?unk:ids;queue=sh?shuffle(base):base;qi=0;show()}
+  function show(){card.classList.remove('flipped');const ids=CARDS.map((c,i)=>i).filter(inTopic);const kn=ids.filter(i=>known.has(i)).length;const c=CARDS[queue[qi]];
+    root.querySelectorAll('.topic')[0].textContent=c[0];root.querySelectorAll('.topic')[1].textContent=c[1];q('.term').textContent=c[1];q('.def').textContent=c[2];
+    q('.progress').textContent=`Card ${qi+1} of ${queue.length} in this pass · ${kn} of ${ids.length} known`+(kn===ids.length?' · deck complete, reviewing everything':'')}
+  const flip=()=>card.classList.toggle('flipped');
+  card.onclick=flip;card.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();flip()}};
+  const next=()=>{qi++;if(qi>=queue.length)build(true);else show()};
+  const save=()=>store.set(key+'Known',[...known]);
+  root.querySelector('[data-a=got]').onclick=()=>{known.add(queue[qi]);save();next()};
+  root.querySelector('[data-a=again]').onclick=()=>{known.delete(queue[qi]);save();queue.push(queue[qi]);next()};
+  root.querySelector('[data-a=shuffle]').onclick=()=>build(true);
+  root.querySelector('[data-a=reset]').onclick=()=>{known=new Set();save();build()};
+  chips();build();
+}
+
+/* ---------- generic: sorting rounds ---------- */
+function makeSort(root,ROUNDS,key){
+  root.innerHTML='<div class="chips"></div><div class="q"></div>';
+  const chipsEl=root.querySelector('.chips'),box=root.querySelector('.q');
+  let round=Object.keys(ROUNDS)[0],items=[],i=0,score=0;
+  function chips(){chipsEl.innerHTML='';Object.keys(ROUNDS).forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.setAttribute('aria-pressed',r===round);b.onclick=()=>{round=r;chips();start()};chipsEl.appendChild(b)})}
+  function start(){items=shuffle(ROUNDS[round].items);i=0;score=0;render()}
+  function render(){
+    if(i>=items.length){const k=key+'Best_'+round,best=store.get(k,0);if(score>best)store.set(k,score);box.innerHTML=`<div class="qnum">Round complete</div><div class="score">${score} / ${items.length}</div><p class="sub">Best so far: ${Math.max(best,score)} / ${items.length}</p><button class="btn primary">Play again</button>`;box.querySelector('button').onclick=start;return}
+    const it=items[i],cats=ROUNDS[round].cats;
+    box.innerHTML=`<div class="qnum">${i+1} of ${items.length} · score ${score}</div><div class="statement"></div><div class="opts${cats.length>3?' grid':''}"></div><div class="fbz"></div>`;
+    box.querySelector('.statement').textContent=it[0];
+    const opts=box.querySelector('.opts');
+    cats.forEach(c=>{const b=document.createElement('button');b.className='opt';b.textContent=c;b.onclick=()=>{const ok=c===it[1];if(ok)score++;[...opts.children].forEach(x=>{x.disabled=true;if(x.textContent===it[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      box.querySelector('.fbz').innerHTML=`<div class="fb ${ok?'right':'wrong'}"><strong>${ok?'Correct.':'It\'s '+it[1]+'.'}</strong>${it[2]}</div><div class="btns" style="margin-top:12px"><button class="btn primary">Next</button></div>`;
+      const nb=box.querySelector('.fbz button');nb.onclick=()=>{i++;render()};nb.focus()};opts.appendChild(b)});
+  }
+  chips();start();
+}
+
+/* ---------- generic: quiz ---------- */
+function makeQuiz(root,QUIZ,key){
+  let qs=[],n=0,score=0;
+  function start(){qs=shuffle(QUIZ);n=0;score=0;render()}
+  function render(){
+    if(n>=qs.length){const best=store.get(key+'Best',0);if(score>best)store.set(key+'Best',score);const r=score/qs.length;const msg=r>=.85?'Exam-ready on this week.':r>=.6?'Solid. Revisit the flashcards you marked "Again".':'Go back through the labs and notes, then try again.';
+      root.innerHTML=`<div class="q"><div class="qnum">Finished</div><div class="score">${score} / ${qs.length}</div><p class="sub">${msg} Best so far: ${Math.max(best,score)} / ${qs.length}.</p><button class="btn primary">Try again</button></div>`;root.querySelector('button').onclick=start;return}
+    const q=qs[n];
+    root.innerHTML=`<div class="q"><div class="qnum">Question ${n+1} of ${qs.length} · score ${score}</div><div class="qtext"></div><div class="opts"></div><div class="fbz"></div></div>`;
+    root.querySelector('.qtext').textContent=q[0];
+    const opts=root.querySelector('.opts');
+    q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>{const ok=j===q[2];if(ok)score++;[...opts.children].forEach((x,k)=>{x.disabled=true;if(k===q[2])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      root.querySelector('.fbz').innerHTML=`<div class="fb ${ok?'right':'wrong'}"><strong>${ok?'Correct.':'Not quite.'}</strong>${q[3]}</div><div class="btns" style="margin-top:12px"><button class="btn primary">${n+1<qs.length?'Next question':'See score'}</button></div>`;
+      const nb=root.querySelector('.fbz button');nb.onclick=()=>{n++;render()};nb.focus()};opts.appendChild(b)});
+  }
+  start();
+}
+
+/* ================= WEEK 8: notes diagrams ================= */
+function shiftDiagram(svg,type){
+  svg.innerHTML='';axes(svg,'Real GDP','Price level');
+  const L=(x1,y1,x2,y2,c,dash,w)=>S('line',{x1,y1,x2,y2,stroke:c,'stroke-width':w||2.5,'stroke-dasharray':dash||''},svg);
+  const T=(x,y,t,c,anc)=>S('text',{x,y,class:'lbl',style:'fill:'+c,'text-anchor':anc||'start'},svg,t);
+  /* SRAS1: (140,300)->(460,80); AD1: (140,90)->(460,310). A at intersection */
+  const s=[140,300,460,80],d=[140,90,460,310];
+  L(...s,'var(--accent)');L(...d,'var(--ad)');
+  let A=[300,190],B;
+  if(type==='cost'){L(80,300,400,80,'var(--accent)','7 4');T(466,84,'SRAS₁','var(--accent)');T(406,84,'SRAS₂','var(--accent)');T(466,314,'AD','var(--ad)');B=[263,174];
+    S('line',{x1:410,y1:110,x2:372,y2:110,stroke:'var(--accent)','stroke-width':1.5},svg);S('polygon',{points:'372,105 362,110 372,115',fill:'var(--accent)'},svg)}
+  else{L(200,90,520,310,'var(--ad)','7 4');T(466,84,'SRAS','var(--accent)');T(420,330-6,'AD₁','var(--ad)','end');T(524,312,'AD₂','var(--ad)');B=[323,174];
+    S('line',{x1:234,y1:150,x2:272,y2:150,stroke:'var(--ad)','stroke-width':1.5},svg);S('polygon',{points:'272,145 282,150 272,155',fill:'var(--ad)'},svg)}
+  [[A,'A'],[B,'B']].forEach(([p,l])=>{L(50,p[1],p[0],p[1],'var(--muted)','3 3',1);L(p[0],p[1],p[0],330,'var(--muted)','3 3',1);S('circle',{cx:p[0],cy:p[1],r:5,fill:'var(--ink)'},svg);T(p[0]+8,p[1]-8,l,'var(--ink)')});
+  S('text',{x:44,y:A[1]+4,'text-anchor':'end'},svg,'P₁');S('text',{x:44,y:B[1]+4,'text-anchor':'end'},svg,'P₂');
+  const lo=type==='cost'?[B,A]:[A,B];S('text',{x:lo[0][0],y:346,'text-anchor':'middle'},svg,type==='cost'?'Y₂':'Y₁');S('text',{x:lo[1][0],y:346,'text-anchor':'middle'},svg,type==='cost'?'Y₁':'Y₂');
+}
+shiftDiagram($('nCost'),'cost');shiftDiagram($('nDemand'),'demand');
+
+/* ================= WEEK 8: MAS lab ================= */
+const masBase={pe:2,mz:3,a:0.5,u:6};
+const mx=scale(0,15,50,530),my=scale(-4,14,330,20);
+function masVals(){return{pe:+$('mPe').value,mz:+$('mMz').value,a:+$('mA').value,u:+$('mU').value}}
+function lineAt(p,U){return p.pe+p.mz-p.a*U}
+function drawMasLine(svg,p,col,w){const pts=[];for(let U=0;U<=15.01;U+=0.25){const v=lineAt(p,U);if(v>=-4&&v<=14)pts.push(mx(U).toFixed(1)+','+my(v).toFixed(1))}if(pts.length>1)S('polyline',{points:pts.join(' '),fill:'none',stroke:col,'stroke-width':w},svg)}
+function drawMas(){
+  const p=masVals(),svg=$('masSvg');svg.innerHTML='';
+  S('line',{x1:50,y1:330,x2:540,y2:330,stroke:'var(--ink)','stroke-width':1.2},svg);S('line',{x1:50,y1:330,x2:50,y2:12,stroke:'var(--ink)','stroke-width':1.2},svg);
+  for(let U=0;U<=15;U+=3){S('text',{x:mx(U),y:346,'text-anchor':'middle'},svg,U+'%')}
+  for(let v=-4;v<=14;v+=2){S('text',{x:44,y:my(v)+4,'text-anchor':'end'},svg,v+'%');if(v!==-4)S('line',{x1:50,y1:my(v),x2:540,y2:my(v),stroke:'var(--grid)','stroke-width':1},svg)}
+  S('line',{x1:50,y1:my(0),x2:540,y2:my(0),stroke:'var(--muted)','stroke-width':1},svg);
+  S('text',{x:540,y:362,'text-anchor':'end'},svg,'Unemployment rate U');S('text',{x:58,y:22},svg,'Inflation π');
+  drawMasLine(svg,masBase,'var(--line)',3);
+  if(p.pe<=14&&p.pe>=-4){S('line',{x1:50,y1:my(p.pe),x2:540,y2:my(p.pe),stroke:'var(--ad)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);S('text',{x:536,y:my(p.pe)-6,'text-anchor':'end',style:'fill:var(--ad)'},svg,'πᵉ = '+p.pe+'%')}
+  drawMasLine(svg,p,'var(--accent)',3);
+  const nairu=p.mz/p.a;
+  if(nairu<=15){S('line',{x1:mx(nairu),y1:20,x2:mx(nairu),y2:330,stroke:'var(--sl)','stroke-width':1.2,'stroke-dasharray':'3 3'},svg);S('text',{x:mx(nairu)+5,y:34,class:'lbl',style:'fill:var(--sl)'},svg,'NAIRU '+nairu.toFixed(1)+'%')}
+  const pi=lineAt(p,p.u),cy=my(Math.max(-4,Math.min(14,pi)));
+  S('line',{x1:mx(p.u),y1:cy,x2:mx(p.u),y2:330,stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);
+  S('circle',{cx:mx(p.u),cy,r:6,fill:'var(--ink)'},svg);
+  S('text',{x:mx(p.u)+10,y:cy-10,class:'lbl',style:'fill:var(--ink)'},svg,'π = '+pi.toFixed(1)+'%'+(pi>14||pi<-4?' (off chart)':''));
+  $('mPeL').textContent=p.pe.toFixed(1)+'%';$('mMzL').textContent=p.mz.toFixed(1)+' pts';$('mAL').textContent=p.a.toFixed(2);$('mUL').textContent=p.u.toFixed(1)+'%';
+  $('mDecomp').innerHTML=`<div><span style="color:var(--ad)">Expected inflation πᵉ</span><span>+${p.pe.toFixed(1)}</span></div><div><span style="color:var(--sl)">Mark-up + institutions μ+z</span><span>+${p.mz.toFixed(1)}</span></div><div><span style="color:var(--accent)">Unemployment effect −αU (${p.a.toFixed(2)} × ${p.u.toFixed(1)})</span><span>−${(p.a*p.u).toFixed(1)}</span></div><div><span>Inflation π</span><span>${pi.toFixed(1)}%</span></div>`;
+  const n=$('mNote');const gap=pi-p.pe;
+  if(Math.abs(gap)<0.15){n.className='note';n.innerHTML='<b>At the NAIRU.</b> Actual inflation equals expected inflation, so expectations won\'t change and inflation is stable.'}
+  else if(gap>0){n.className='note warn';n.innerHTML=`<b>Unemployment is below the NAIRU.</b> Inflation (${pi.toFixed(1)}%) beats expectations (${p.pe.toFixed(1)}%). With adaptive expectations, people revise πᵉ up next year and the line shifts up. That's how inflation accelerates.`}
+  else{n.className='note';n.innerHTML=`<b>Unemployment is above the NAIRU.</b> Inflation (${pi.toFixed(1)}%) is below expectations (${p.pe.toFixed(1)}%), so expectations get revised down over time.`}
+}
+['mPe','mMz','mA','mU'].forEach(id=>$(id).oninput=drawMas);
+const PRESETS={base:{pe:2,mz:3,a:0.5,u:6},'70s':{pe:9,mz:3,a:0.5,u:9},minw:{pe:2,mz:4.5,a:0.5,u:6},comp:{pe:2,mz:1.5,a:0.5,u:6},boom:{pe:2,mz:3,a:0.5,u:3}};
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{const p=PRESETS[b.dataset.preset];$('mPe').value=p.pe;$('mMz').value=p.mz;$('mA').value=p.a;$('mU').value=p.u;drawMas()});
+drawMas();
+
+/* ================= WEEK 8: expectations lab ================= */
+const ex=scale(1,15,70,530),ey=scale(-2,16,330,20);
+function simulate(){
+  const lam=+$('eLam').value,anch=$('eAnch').checked,sc=$('eScen').value;
+  const a=0.5,mz0=3,nairu=6;let pe=2;const out=[];
+  for(let t=1;t<=15;t++){
+    let U=nairu,mz=mz0;
+    if(sc==='boom'||sc==='tight'){if(t>=3&&t<=6)U=4}
+    if(sc==='tight'&&t>=7&&t<=12)U=8;
+    if(sc==='energy'&&(t===3||t===4))mz=mz0+3;
+    const peUsed=anch?2:pe;
+    const pi=peUsed+mz-a*U;
+    out.push({t,pi,pe:peUsed,U});
+    pe=anch?2:peUsed+lam*(pi-peUsed);
+  }
+  return out;
+}
+function drawExp(){
+  const lam=+$('eLam').value,anch=$('eAnch').checked,sc=$('eScen').value;
+  $('eLam').disabled=anch;$('eLamL').textContent=anch?'n/a (anchored)':lam.toFixed(2);
+  const d=simulate(),svg=$('expSvg');svg.innerHTML='';
+  /* shaded shock years */
+  const shade=(a,b,lab)=>{S('rect',{x:ex(a)-14,y:20,width:ex(b)-ex(a)+28,height:310,fill:'var(--grid)'},svg);S('text',{x:(ex(a)+ex(b))/2,y:34,'text-anchor':'middle'},svg,lab)};
+  if(sc!=='energy')shade(3,6,'Boom (U = 4%)');else shade(3,4,'Energy shock');
+  if(sc==='tight')shade(7,12,'Rates up (U = 8%)');
+  S('line',{x1:70,y1:330,x2:540,y2:330,stroke:'var(--ink)','stroke-width':1.2},svg);S('line',{x1:70,y1:330,x2:70,y2:12,stroke:'var(--ink)','stroke-width':1.2},svg);
+  for(let v=-2;v<=16;v+=2)S('text',{x:62,y:ey(v)+4,'text-anchor':'end'},svg,v+'%');
+  for(let t=1;t<=15;t+=2)S('text',{x:ex(t),y:346,'text-anchor':'middle'},svg,'Y'+t);
+  S('text',{x:540,y:362,'text-anchor':'end'},svg,'Year');S('text',{x:78,y:16},svg,'Inflation');
+  S('line',{x1:70,y1:ey(0),x2:540,y2:ey(0),stroke:'var(--muted)','stroke-width':0.8},svg);
+  S('line',{x1:70,y1:ey(2),x2:540,y2:ey(2),stroke:'var(--good)','stroke-width':1.2},svg);
+  const cl=v=>Math.max(-2,Math.min(16,v));
+  S('polyline',{points:d.map(r=>ex(r.t)+','+ey(cl(r.pe))).join(' '),fill:'none',stroke:'var(--ad)','stroke-width':2,'stroke-dasharray':'6 4'},svg);
+  S('polyline',{points:d.map(r=>ex(r.t)+','+ey(cl(r.pi))).join(' '),fill:'none',stroke:'var(--accent)','stroke-width':3},svg);
+  d.forEach(r=>S('circle',{cx:ex(r.t),cy:ey(cl(r.pi)),r:3.5,fill:'var(--accent)'},svg));
+  const peak=Math.max(...d.map(r=>r.pi)),end=d[14].pi,yrs=d.filter(r=>r.pi>3.05).length;
+  $('ePeak').textContent=peak.toFixed(1)+'%';$('eEnd').textContent=end.toFixed(1)+'%';$('eYrs').textContent=yrs;
+  const n=$('eNote');
+  if(anch){n.className='note';n.innerHTML='<b>Anchored expectations.</b> Everyone believes the 2% target, so the shock causes only a temporary rise. Inflation returns to target as soon as the shock ends, with no costly recession needed.'}
+  else if(sc==='tight'){n.className='note warn';n.innerHTML=lam>0.6?'<b>The cost of disinflation.</b> Expectations caught up during the boom, so the central bank must hold unemployment at 8% for years to bring them back down. This is what the notes mean by the high economic cost of unanchored expectations.':'<b>Low λ.</b> Expectations barely moved during the boom, so tightening pushes inflation well below target. With adaptive expectations, how much pain is needed depends on λ.'}
+  else if(lam<0.1){n.className='note';n.innerHTML='<b>λ ≈ 0, like the 1950s.</b> Expectations never move, so inflation rises only while the shock lasts and then returns to 2%. There\'s a stable trade-off between inflation and unemployment.'}
+  else if(lam>0.85){n.className='note warn';n.innerHTML=`<b>λ ≈ 1, like the 1970s.</b> People expect last year's inflation again, so inflation ratchets up every year of the shock and stays at ${end.toFixed(1)}% long after it ends. That's inflation inertia.`}
+  else{n.className='note';n.innerHTML=`<b>Partial adjustment.</b> Expectations chase actual inflation by ${Math.round(lam*100)}% of each year's error, so inflation stays above target after the shock ends. Drag λ towards 1 to make it worse.`}
+}
+['eLam','eScen','eAnch'].forEach(id=>$(id).addEventListener('input',drawExp));$('eAnch').addEventListener('change',drawExp);
+$('eL0').onclick=()=>{$('eAnch').checked=false;$('eLam').value=0;drawExp()};$('eL1').onclick=()=>{$('eAnch').checked=false;$('eLam').value=1;drawExp()};
+drawExp();
+
+/* ================= WEEK 8: Okun lab ================= */
+const REASONS=[['wel','Social welfare discourages job search'],['hoard','Labour hoarding in downturns'],['hours','Cutting hours instead of jobs'],['disc','Discouraged workers leave the labour force'],['prod','Productivity gains reduce hiring needs'],['mis','Skill mismatches between sectors']];
+$('oReasons').innerHTML=REASONS.map(([k,t])=>`<label class="check"><input type="checkbox" data-r="${k}" checked> ${t}</label>`).join('');
+const ox=scale(-6,6,50,530),oy=scale(0,16,330,20);
+function beta(){const on=[...document.querySelectorAll('[data-r]')].filter(c=>c.checked).length;return +(1-0.12*on).toFixed(2)}
+function drawOkun(){
+  const gap=+$('oGap').value,UF=+$('oUF').value,b=beta(),U=Math.max(0,UF-b*gap);
+  $('oGapL').textContent=(gap>0?'+':'')+gap.toFixed(1)+'%';$('oUFL').textContent=UF.toFixed(1)+'%';
+  const svg=$('okSvg');svg.innerHTML='';
+  for(let v=0;v<=16;v+=4){S('text',{x:44,y:oy(v)+4,'text-anchor':'end'},svg,v+'%');if(v)S('line',{x1:50,y1:oy(v),x2:540,y2:oy(v),stroke:'var(--grid)'},svg)}
+  for(let g=-6;g<=6;g+=2)S('text',{x:ox(g),y:346,'text-anchor':'middle'},svg,(g>0?'+':'')+g+'%');
+  S('line',{x1:50,y1:330,x2:540,y2:330,stroke:'var(--ink)','stroke-width':1.2},svg);S('line',{x1:50,y1:330,x2:50,y2:12,stroke:'var(--ink)','stroke-width':1.2},svg);
+  S('line',{x1:ox(0),y1:20,x2:ox(0),y2:330,stroke:'var(--muted)','stroke-width':1,'stroke-dasharray':'4 4'},svg);
+  S('text',{x:ox(0)+5,y:34},svg,'Potential GDP (Y = Y_F)');
+  S('text',{x:540,y:362,'text-anchor':'end'},svg,'Output gap (Y − Y_F)');S('text',{x:58,y:22},svg,'Unemployment');
+  S('line',{x1:50,y1:oy(UF),x2:540,y2:oy(UF),stroke:'var(--sl)','stroke-width':1.2,'stroke-dasharray':'3 3'},svg);
+  S('text',{x:56,y:oy(UF)-6,style:'fill:var(--sl)'},svg,'NAIRU '+UF+'%');
+  S('line',{x1:ox(-6),y1:oy(Math.min(16,UF+6)),x2:ox(6),y2:oy(Math.max(0,UF-6)),stroke:'var(--line)','stroke-width':3},svg);
+  S('line',{x1:ox(-6),y1:oy(UF+6*b),x2:ox(6),y2:oy(Math.max(0,UF-6*b)),stroke:'var(--accent)','stroke-width':3},svg);
+  S('line',{x1:ox(gap),y1:oy(U),x2:ox(gap),y2:330,stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);
+  S('circle',{cx:ox(gap),cy:oy(U),r:6,fill:'var(--ink)'},svg);
+  S('text',{x:ox(gap)+(gap>3?-10:10),y:oy(U)-12,class:'lbl','text-anchor':gap>3?'end':'start',style:'fill:var(--ink)'},svg,'U = '+U.toFixed(1)+'%');
+  const pi=2+0.6*UF-0.6*U; /* MAS with NAIRU at UF: mz = α·UF */
+  $('oBeta').textContent=b.toFixed(2);$('oU').textContent=U.toFixed(1)+'%';$('oPi').textContent=pi.toFixed(1)+'%';
+  const n=$('oNote');
+  const dir=gap<0?`GDP is ${Math.abs(gap)}% below potential, so unemployment rises ${(b*Math.abs(gap)).toFixed(1)} points above the NAIRU`:gap>0?`GDP is ${gap}% above potential, so unemployment falls ${(b*gap).toFixed(1)} points below the NAIRU and inflation rises above 2%`:'GDP is at potential, so unemployment equals the NAIRU and inflation is stable';
+  n.className='note'+(gap>0?' warn':'');
+  n.innerHTML=`<b>${dir}.</b> `+(b<0.5?`With β = ${b.toFixed(2)}, each 1% of output moves unemployment by much less than one point. That's typical in the data.`:b>=0.99?'With every reason switched off, the relationship is one-for-one. Real economies rarely look like this.':`Switch more reasons on or off to see how β changes.`);
+}
+['oGap','oUF'].forEach(id=>$(id).oninput=drawOkun);document.querySelectorAll('[data-r]').forEach(c=>c.onchange=drawOkun);
+drawOkun();
+
+/* ================= WEEK 8 DATA ================= */
+const CARDS8=[
+['MAS','Modified Aggregate Supply (MAS) equation','π = πᵉ + (μ + z) − αU. Current inflation depends on expected inflation, the mark-up and labour market institutions, and current unemployment.'],
+['MAS','Mark-up μ','How far prices are set above wage costs: P = (1 + μ)W. It\'s lower in competitive markets, where firms chase volume rather than higher prices.'],
+['MAS','z (labour market institutions)','A catch-all for labour market structures such as wage bargaining and minimum wage laws that keep wages, and so prices, higher.'],
+['MAS','α (alpha)','How sensitive wages and inflation are to unemployment: how much inflation falls for each point rise in unemployment.'],
+['MAS','Wage equation W = Pᵉ(1 − αU + z)','Nominal wages rise with expected prices and institutional factors, and fall as unemployment rises.'],
+['MAS','Why higher U lowers inflation','GDP falls → unemployment rises → AD falls → firms have unsold stock → they cut prices. Sticky prices or high expectations can weaken this.'],
+['MAS','Cost-push inflation','Higher costs (e.g. a minimum wage rise) shift SRAS left: a higher price level and lower output (A → B).'],
+['MAS','Demand-pull inflation','AD shifts right: a higher price level and higher output. A minimum wage rise can do this because poorer households spend the extra income.'],
+['MAS','Minimum wage evidence','The cost-push effect is very small. Higher pay raises productivity, and firms sell more volume to households who spend the extra income.'],
+['Expectations','Wage-setting process','Workers who\'ve seen high inflation expect more, so they demand higher nominal wages. Unit labour costs rise and firms raise prices.'],
+['Expectations','Price-setting behaviour','Firms build expected cost and price rises into current prices. They\'re confident rivals will too, and they\'ll pay menu costs rather than fall behind.'],
+['Expectations','Wage-price spiral','Past inflation → higher expectations → higher wage demands → higher costs → higher prices → higher expectations again. Common in the 1970s.'],
+['Expectations','Adaptive expectations','πᵉₜ = πᵉₜ₋₁ + λ(πₜ − πᵉₜ₋₁). People update last year\'s forecast by a fraction λ of their forecast error.'],
+['Expectations','λ (adjustment coefficient)','Between 0 and 1. λ = 0 means expectations never change (1950s). λ ≈ 1 means people expect last year\'s inflation again (1970s).'],
+['Expectations','Inflation inertia','Inflation persists after its original cause has gone, because expectations are built into wages and prices.'],
+['Expectations','Anchored vs unanchored expectations','Anchored: people believe the central bank\'s target. Unanchored: people expect persistently high inflation, and breaking that is costly (recession, unemployment).'],
+['Expectations','Central bank credibility','If people trust the commitment to the target, expectations anchor there and inflation stays close to it.'],
+['Expectations','Rational expectations','People use all available information, not just the past, though past inflation is still a significant part of it.'],
+['History','1950s','A stable inflation–unemployment trade-off. Expectations were constant (λ ≈ 0).'],
+['History','1970s','λ ≈ 1. Rising expectations kept inflation high despite rising unemployment. The relationship broke down and wage-price spirals and strikes followed.'],
+['History','Breaking the 1970s spiral','Social contracts limited wage rises, and central banks raised interest rates substantially to bring expectations down.'],
+['History','Inflation targeting','From the 1990s, central banks announced targets (eventually 2%) and became more transparent. Inflation became low and stable, and the old relationship reappeared.'],
+['Okun','Okun\'s law','U − U_F = −β(Y − Y_F). An observed inverse link between output and unemployment, proposed by Arthur Okun in 1962. It\'s empirical, not a theory.'],
+['Okun','Direction of causality (Okun)','In the notes\' version, changes in GDP cause changes in unemployment. Other versions reverse this.'],
+['Okun','NAIRU / U_F','The non-accelerating inflation rate of unemployment, also called the natural rate. It\'s unemployment at potential GDP, where inflation is stable.'],
+['Okun','Okun\'s coefficient β','How far unemployment moves from U_F for each 1% output gap. It\'s usually small, well below one-for-one.'],
+['Okun','Labour hoarding','Firms keep underused staff in a downturn because they expect a recovery, so output falls more than unemployment rises.'],
+['Okun','Hours worked','Firms cut hours instead of jobs. Output falls without official unemployment rising.'],
+['Okun','Discouraged workers','People stop looking for work and leave the labour force. Unemployment falls without any rise in output or jobs.'],
+['Okun','Productivity, mismatch and welfare','Productivity gains reduce the need to hire. Growing sectors need different skills. Welfare can reduce job search. All three weaken the link.'],
+['Okun','Limits of Okun\'s law','It\'s a short-to-medium-term, cyclical relationship that doesn\'t hold for long-run structural change and varies across economies and time.'],
+];
+const ROUNDS8={
+ 'Which MAS term?':{cats:['Expected inflation πᵉ','Mark-up + institutions μ+z','Unemployment −αU'],items:[
+  ['Unions expect 6% inflation next year and bargain for pay rises to match.','Expected inflation πᵉ','Wage demands built on expected inflation feed straight into current inflation.'],
+  ['The government raises the minimum wage.','Mark-up + institutions μ+z','Minimum wage law is a labour market institution (z).'],
+  ['New discount supermarkets enter the market and cut margins.','Mark-up + institutions μ+z','More competition lowers the mark-up μ.'],
+  ['In a recession, firms stuck with unsold stock cut their prices.','Unemployment −αU','Higher unemployment and lower AD push inflation down.'],
+  ['Firms raise list prices now because they expect suppliers to charge more next year.','Expected inflation πᵉ','Price-setting behaviour builds in expected cost rises.'],
+  ['Collective bargaining coverage expands across sectors.','Mark-up + institutions μ+z','Wage bargaining structures are part of z.'],
+  ['Unemployment falls to a record low and firms compete for scarce workers.','Unemployment −αU','Low U means the −αU term subtracts less, so inflation rises.'],
+  ['Nobody believes the central bank will hit its target.','Expected inflation πᵉ','Unanchored expectations raise πᵉ.']]},
+ 'Cost-push or demand-pull?':{cats:['Cost-push','Demand-pull'],items:[
+  ['Energy prices surge, raising production costs for most firms.','Cost-push','Higher costs shift SRAS left.'],
+  ['A minimum wage rise raises labour costs and firms pass them on.','Cost-push','This is the traditional theory: SRAS shifts left.'],
+  ['A minimum wage rise gives low-income households more to spend.','Demand-pull','Poorer households spend extra income, so AD shifts right.'],
+  ['The government launches a large infrastructure spending programme.','Demand-pull','Government spending shifts AD right.'],
+  ['Income tax cuts boost household consumption.','Demand-pull','Higher consumption shifts AD right.'],
+  ['Wage settlements push up unit labour costs across the economy.','Cost-push','Higher wage costs shift SRAS left.']]},
+ 'Why is Okun\'s β small?':{cats:['Labour hoarding','Fewer hours','Discouraged workers','Productivity','Skill mismatch','Social welfare'],items:[
+  ['A factory keeps idle staff on during a downturn, expecting orders to return.','Labour hoarding','Output falls but unemployment barely rises.'],
+  ['A retailer moves everyone to a three-day week instead of making layoffs.','Fewer hours','Output falls without official unemployment rising.'],
+  ['After a year of rejections, a jobseeker stops looking for work.','Discouraged workers','They leave the labour force, so measured unemployment falls without more jobs.'],
+  ['A firm meets higher demand with new software instead of new hires.','Productivity','Output rises without unemployment falling much.'],
+  ['The tech sector booms, but laid-off construction workers lack the skills to move into it.','Skill mismatch','Demand for one type of labour rises while another falls.'],
+  ['An unemployed person stays on benefits despite rising vacancies.','Social welfare','Welfare can weaken the incentive to take up jobs.']]}
+};
+const QUIZ8=[
+['In the MAS, if unemployment rises and everything else stays the same, inflation…',['Rises','Falls','Is unchanged','Equals expected inflation'],1,'The −αU term: higher unemployment lowers AD, so firms cut prices.'],
+['The mark-up μ is likely to be lower when…',['Goods markets are more competitive','Unions are stronger','Expected inflation is high','Unemployment is low'],0,'Competitive firms keep prices low to win market share, earning profit through volume.'],
+['In the MAS, z stands for…',['Expected inflation','The mark-up','Labour market institutions such as bargaining and minimum wages','Okun\'s coefficient'],2,'z is the catch-all for labour market structures that keep wages higher.'],
+['With adaptive expectations and λ = 1, people expect next year\'s inflation to be…',['2%','The same as this year\'s actual inflation','Zero','Last year\'s expectation'],1,'πᵉₜ = πᵉₜ₋₁ + 1 × (πₜ − πᵉₜ₋₁) = πₜ. They fully adjust to the latest inflation.'],
+['λ ≈ 0 best describes which period?',['The 1950s','The 1970s','The 2020s energy shock','None'],0,'In the 1950s, expectations stayed constant every year.'],
+['"Inflation inertia" means…',['Inflation never changes','Inflation persists after its cause has gone, because expectations are ingrained','Prices are sticky downward only','Unemployment and inflation move together'],1,'Expectations built into wages and prices keep inflation going.'],
+['Why did the inflation–unemployment relationship break down in the 1970s?',['Unemployment fell sharply','Rising expectations kept inflation high even as unemployment rose','Central banks adopted 2% targets','Minimum wages were abolished'],1,'The πᵉ term rose faster than the −αU term fell.'],
+['The traditional theory says a minimum wage rise causes…',['Demand-pull inflation, with AD shifting right','Cost-push inflation, with SRAS shifting left','A rightward shift of the LRAS','Deflation'],1,'Higher labour costs shift SRAS left, so prices rise and output falls (A → B).'],
+['Why does the evidence find only a small cost-push effect from minimum wages?',['Firms ignore wage costs','Higher pay raises productivity, and poorer households spend the extra income','Minimum wages are never enforced','Central banks offset it'],1,'Firms sell more volume, and AD shifts right (demand-pull).'],
+['The NAIRU is…',['The lowest possible unemployment rate','The unemployment rate at which inflation is stable','Zero unemployment','The unemployment rate in a recession'],1,'At the NAIRU (U_F), the economy is at potential and there\'s no pressure on inflation.'],
+['By Okun\'s law, if GDP is above potential, unemployment will be…',['Above the NAIRU','Below the NAIRU','Equal to the NAIRU','Unaffected'],1,'U − U_F = −β(Y − Y_F). A positive output gap means unemployment below U_F.'],
+['In the notes\' version of Okun\'s law, causality runs…',['From unemployment to GDP','From GDP to unemployment','From inflation to GDP','There is no causality'],1,'Changes in Y cause changes in U, though other versions reverse this.'],
+['Labour hoarding makes Okun\'s coefficient…',['Larger','Smaller','Exactly 1','Negative'],1,'Firms keep staff in downturns, so unemployment moves less than output.'],
+['Discouraged workers leaving the labour force…',['Raise measured unemployment','Lower measured unemployment without more output','Raise productivity','Shift the AD curve'],1,'They\'re no longer counted as unemployed, even though no jobs were created.'],
+['How did central banks help end the 1970s spirals?',['Cutting interest rates','Raising interest rates substantially to bring expectations down','Printing money','Abolishing unions'],1,'Alongside social contracts that limited wage rises.'],
+['If a central bank is fully credible, a temporary supply shock will most likely cause…',['Persistent high inflation','Only a temporary rise in inflation, because expectations stay anchored','Permanent deflation','No change in prices at all'],1,'With πᵉ anchored at target, inflation returns once the shock passes. Try it in the expectations lab.']
+];
+makeFlashcards($('fc8'),CARDS8,'w8');makeSort($('so8'),ROUNDS8,'w8sort');makeQuiz($('qz8'),QUIZ8,'w8quiz');
+
+const valid=id=>id&&document.getElementById(id)&&document.getElementById(id).tagName==='SECTION'?id:null;
+showTab(valid(location.hash.slice(1))||valid(store.get('tab8',''))||'w8simple');
+</script>
+</body>
+</html>

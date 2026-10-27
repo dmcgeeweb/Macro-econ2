@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Week 6 Study Lab: Labour Market & SRAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: exam-pad graph paper; week switch + sticky tab strip; each tab is one study mode, diagrams left / controls right, stacking on phones */
+:root{
+  --paper:#F3F6F8; --grid:#E2E8EC; --surface:#FFFFFF; --ink:#14212B; --muted:#56666F; --line:#C9D3D9;
+  --accent:#2346B8; --accent-soft:#E3E9FB; --ad:#C2410C; --sl:#0F7B6C; --mark:#F6DC55; --mark-ink:#3B3000;
+  --good:#157F4F; --good-soft:#E1F3EA; --bad:#B42318; --bad-soft:#FBE7E5;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E151A; --grid:#18222A; --surface:#141D23; --ink:#E5ECF0; --muted:#92A2AC; --line:#2A3843;
+  --accent:#86A2FF; --accent-soft:#1B2645; --ad:#FB8D52; --sl:#43C7B2; --mark:#E7C93B; --mark-ink:#2A2200;
+  --good:#53C58E; --good-soft:#12291F; --bad:#F2796E; --bad-soft:#2E1715; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E151A; --grid:#18222A; --surface:#141D23; --ink:#E5ECF0; --muted:#92A2AC; --line:#2A3843;
+  --accent:#86A2FF; --accent-soft:#1B2645; --ad:#FB8D52; --sl:#43C7B2; --mark:#E7C93B; --mark-ink:#2A2200;
+  --good:#53C58E; --good-soft:#12291F; --bad:#F2796E; --bad-soft:#2E1715; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.lt{font-style:normal}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1080px;margin:0 auto}
+header{padding-block:24px 12px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.05;margin:6px 0 8px;text-wrap:balance}
+h1 mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:3px}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.weeks{display:inline-flex;border:1px solid var(--ink);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.weeks button{font:700 14px var(--f-mono);letter-spacing:.04em;padding:8px 16px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.weeks button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:10px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tab{flex:0 0 auto;font:600 14px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-family:var(--f-display);font-weight:700;font-size:26px;margin:0 0 4px;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 18px;max-width:68ch}
+.lab{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:820px){.lab{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+svg.chart{width:100%;height:auto;display:block}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--muted)}
+svg .lbl{font-family:var(--f-body);font-weight:700;font-size:14px}
+.ctrl{display:grid;gap:6px;margin-bottom:14px}
+.ctrl label{font-weight:700;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.ctrl label span{font-family:var(--f-mono);font-weight:400;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:15px var(--f-body);padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:6px;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.btn{font:700 14px var(--f-body);padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.small{font-size:13px;padding:6px 10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pulse{box-shadow:0 0 0 3px var(--mark)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.seg button{font:700 14px var(--f-body);padding:8px 14px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.note{border-left:3px solid var(--accent);padding:8px 12px;background:var(--accent-soft);font-size:15px;margin-bottom:14px}
+.note.warn{border-color:var(--ad)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat b{display:block;font-family:var(--f-mono);font-size:20px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400;text-transform:uppercase;letter-spacing:.05em}
+td.num{font-family:var(--f-mono)}
+.think{margin-top:18px}
+.think summary{cursor:pointer;font-weight:700}
+.think p{margin:8px 0 0;color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--grid);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ad);transition:width .3s}
+.eq{font-family:var(--f-mono);font-size:clamp(15px,2.6vw,20px);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:nowrap;margin:0 0 14px}
+.eq .t1{color:var(--ad)} .eq .t2{color:var(--sl)} .eq .t3{color:var(--accent)}
+.decomp{font-family:var(--f-mono);font-size:15px;font-variant-numeric:tabular-nums;display:grid;gap:4px;margin-bottom:14px}
+.decomp div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding-block:2px}
+.decomp div:last-child{border-bottom:0;font-weight:600;color:var(--ink)}
+/* notes */
+.notes{display:grid;gap:16px}
+.ncard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.ncard ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.ncard p{margin:6px 0}
+.ncard .tag{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:720px){.twocol{grid-template-columns:1fr}}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+.chain span{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:700}
+.chain i{font-style:normal;color:var(--muted)}
+.chain .loop{background:var(--mark);color:var(--mark-ink)}
+.keygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}
+.keyrow{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:start;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--paper)}
+.keyrow b{font-family:var(--f-mono);font-size:18px;color:var(--accent);line-height:1.3}
+.keyrow span{font-size:14px}
+.keyrow small{display:block;color:var(--muted);font-size:12px}
+.plain{font-size:17px;max-width:68ch}
+.plain p{margin:8px 0}
+.eg{background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:15px}
+.eg b.l{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.oneline{background:var(--mark);color:var(--mark-ink);border-radius:6px;padding:6px 10px;font-weight:700;display:inline-block;margin-top:6px}
+/* flashcards */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{font:600 13px var(--f-body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.cardzone{perspective:1200px;max-width:640px}
+.fcard{position:relative;min-height:270px;cursor:pointer;transform-style:preserve-3d;transition:transform .45s}
+.fcard.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:10px;overflow:auto}
+.face.back{transform:rotateY(180deg);border-color:var(--accent)}
+.face .topic{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.face .term{font-family:var(--f-display);font-size:28px;font-weight:700;line-height:1.15;text-wrap:balance}
+.face .def{font-size:17px}
+.hint{color:var(--muted);font-size:13px}
+.progress{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin:12px 0}
+@media (prefers-reduced-motion:reduce){.fcard{transition:none}}
+/* quiz + sort */
+.q{max-width:720px}
+.qnum{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.qtext{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.25;margin:6px 0 14px;text-wrap:balance}
+.opts{display:grid;gap:8px}
+.opts.grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.opt{text-align:left;font:16px var(--f-body);padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.fb{margin-top:14px;padding:12px 14px;border-radius:8px;font-size:15px}
+.fb.right{background:var(--good-soft);border:1px solid var(--good)}
+.fb.wrong{background:var(--bad-soft);border:1px solid var(--bad)}
+.fb strong{display:block;margin-bottom:2px}
+.score{font-family:var(--f-display);font-size:48px;font-weight:700}
+.statement{font-size:19px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;margin:8px 0 14px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--ad) 0 4px,transparent 4px 7px)!important}
+</style>
+<style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow" id="hdrEyebrow">Macroeconomics · Week six</div>
+  <h1 id="hdrTitle">The labour market &amp; the <mark>SRAS</mark></h1>
+  <p class="lede" id="hdrLede">Move the diagrams yourself, then test what stuck. Start with the two labs, then use the flashcards, sorting rounds and quiz to revise.</p>
+</header>
+<nav>
+  <div class="tabs" role="tablist" data-week="6">
+    <button class="tab" role="tab" data-tab="sras">SRAS lab</button>
+    <button class="tab" role="tab" data-tab="labour">Labour market lab</button>
+    <button class="tab" role="tab" data-tab="cards">Flashcards</button>
+    <button class="tab" role="tab" data-tab="sort">Sorting rounds</button>
+    <button class="tab" role="tab" data-tab="quiz">Quiz</button>
+  </div>
+</nav>
+
+<section id="sras" role="tabpanel" data-week="6">
+  <h2>Walk up the SRAS curve</h2>
+  <p class="sub">Press "Raise AD" a few times to move from A to B to C. Watch each step: GDP gains shrink and price rises grow as the economy nears the LRAS. Then change how sticky wages and prices are.</p>
+  <div class="lab">
+    <div class="panel"><svg class="chart" id="srasSvg" viewBox="0 0 560 370" role="img" aria-label="SRAS and AD diagram"></svg>
+      <div class="legend"><span><i style="background:var(--accent)"></i>SRAS</span><span><i style="background:var(--ad)"></i>AD</span><span><i style="background:var(--muted)"></i>LRAS (potential GDP)</span></div>
+    </div>
+    <div class="panel">
+      <div class="btns"><button class="btn primary" id="adUp">Raise AD (more government spending)</button><button class="btn" id="adReset">Reset</button></div>
+      <div class="ctrl"><label for="stick">Wage &amp; price stickiness <span id="stickLbl">medium</span></label>
+        <input type="range" id="stick" min="0" max="100" value="50"></div>
+      <div class="note" id="srasZone"></div>
+      <table><thead><tr><th>Point</th><th>Real GDP</th><th>Price level</th><th>ΔGDP</th><th>ΔP</th></tr></thead><tbody id="srasTable"></tbody></table>
+    </div>
+  </div>
+  <details class="think"><summary>Check yourself: why is the curve flat on the left?</summary>
+    <p>There's spare capacity and wages are sticky. When prices rise, revenue goes up but wage costs don't, so profit per unit rises and firms hire more and produce more. Menu costs keep some prices sticky too. So extra AD mainly raises output, not prices.</p></details>
+  <details class="think"><summary>Check yourself: what does this mean for fiscal policy?</summary>
+    <p>Near point A, a fiscal stimulus moves the economy towards potential with little inflation. Near the LRAS, the same stimulus mostly raises prices, so governments shouldn't stimulate during an upswing.</p></details>
+  <details class="think"><summary>Check yourself: what happens when you make wages and prices more sticky?</summary>
+    <p>The SRAS gets flatter, so each rise in AD produces more output and less inflation. That's the Keynesian case for fiscal policy. More flexibility gives a steeper curve, closer to the neoclassical view.</p></details>
+</section>
+
+<section id="labour" role="tabpanel" data-week="6" hidden>
+  <h2>Clear the labour market</h2>
+  <p class="sub">The wage starts above equilibrium, so there's unemployment. Choose a school of thought, then see how each one gets back to equilibrium.</p>
+  <div class="lab">
+    <div class="panel"><svg class="chart" id="labSvg" viewBox="0 0 560 370" role="img" aria-label="Labour market diagram"></svg>
+      <div class="legend"><span><i style="background:var(--accent)"></i>DL, labour demand by firms</span><span><i style="background:var(--sl)"></i>SL, labour supply by workers</span><span><i style="background:var(--ad)"></i>Current wage</span></div>
+    </div>
+    <div class="panel">
+      <div class="seg" role="group" aria-label="School of thought"><button id="mNeo" aria-pressed="true">Neoclassical</button><button id="mKey" aria-pressed="false">Keynesian</button></div>
+      <div class="ctrl"><label for="wage">Wage rate <span id="wageLbl"></span></label><input type="range" id="wage" min="20" max="90" value="70"></div>
+      <div class="btns"><button class="btn primary" id="adjust">Let the market adjust</button><button class="btn" id="gov">Raise government spending</button><button class="btn" id="labReset">Reset</button></div>
+      <div class="stats">
+        <div class="stat"><small>Labour demanded</small><b id="sLd">–</b></div>
+        <div class="stat"><small>Labour supplied</small><b id="sLs">–</b></div>
+        <div class="stat"><small>Unemployed</small><b id="sU">–</b></div>
+      </div>
+      <div class="note" id="labNote"></div>
+      <div style="font-size:14px"><b>Goods market:</b> <span id="gap"></span><div class="bar"><i id="gapBar"></i></div></div>
+    </div>
+  </div>
+  <details class="think"><summary>Check yourself: name three reasons DL slopes down</summary>
+    <p>Diminishing marginal returns to labour, the substitution effect (firms swap expensive labour for capital such as Gen AI) and the output effect (labour is a derived demand, so higher wages mean higher prices, fewer sales and less labour needed).</p></details>
+  <details class="think"><summary>Check yourself: why does the market SL slope up if an individual's can bend backwards?</summary>
+    <p>An individual may choose more leisure at very high wages, but across the whole market, higher wages pull new workers in.</p></details>
+  <details class="think"><summary>Check yourself: how could expansionary policy shift SL?</summary>
+    <p>A higher minimum wage can draw more people into work, shifting SL right. Higher welfare payments may discourage low-paid work. The overall effect on SL is hard to predict.</p></details>
+</section>
+
+<section id="cards" role="tabpanel" data-week="6" hidden>
+  <h2>Flashcards</h2>
+  <p class="sub">Tap the card (or press space) to flip it. Mark each one, and the cards you get wrong come back around.</p>
+  <div id="fc6"></div>
+</section>
+<section id="sort" role="tabpanel" data-week="6" hidden>
+  <h2>Sorting rounds</h2>
+  <p class="sub">Put each statement or scenario into the right category. Choose a round:</p>
+  <div id="so6"></div>
+</section>
+<section id="quiz" role="tabpanel" data-week="6" hidden>
+  <h2>Quiz</h2>
+  <p class="sub">Fifteen exam-style questions from the notes, in a new order each time, each with an explanation.</p>
+  <div id="qz6"></div>
+</section>
+
+</div>
+<script>
+
+const store={get(k,d){try{const v=localStorage.getItem('w6_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('w6_'+k,JSON.stringify(v))}catch(e){}}};
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function S(tag,a,parent,text){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function animate(from,to,ms,step,done){if(reduce){step(to);done&&done();return}const t0=performance.now();function f(t){const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;step(from+(to-from)*e);if(p<1)requestAnimationFrame(f);else done&&done()}requestAnimationFrame(f)}
+function esc(s){return s.replace(/'/g,"&#39;")}
+
+/* ---------- weeks + tabs ---------- */
+const HDR={
+ 6:{eyebrow:'Macroeconomics · Week six',title:'The labour market &amp; the <mark>SRAS</mark>',lede:'Move the diagrams yourself, then test what stuck. Start with the two labs, then use the flashcards, sorting rounds and quiz to revise.',first:'sras'},
+ 8:{eyebrow:'Macroeconomics · Week eight',title:'The MAS, the <mark>Phillips curve</mark> &amp; Okun\'s law',lede:'Start with the simple explainer, then the notes summary. Try the three labs, then revise with the flashcards, sorting rounds and quiz.',first:'w8simple'}
+};
+const allTabs=[...document.querySelectorAll('.tab')];
+function weekOf(tab){return document.getElementById(tab).dataset.week}
+function showTab(id){
+  const wk=weekOf(id);
+  document.querySelectorAll('.weeks button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.week===wk));
+  document.querySelectorAll('.tabs').forEach(t=>t.hidden=t.dataset.week!==wk);
+  allTabs.forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===id));
+  document.querySelectorAll('section[role=tabpanel]').forEach(s=>s.hidden=s.id!==id);
+  const h=HDR[wk];$('hdrEyebrow').textContent=h.eyebrow.replace(/&amp;/g,'&');$('hdrTitle').innerHTML=h.title;$('hdrLede').textContent=h.lede;
+  store.set('tab',id);store.set('tab'+wk,id);
+}
+allTabs.forEach(t=>t.onclick=()=>showTab(t.dataset.tab));
+document.querySelectorAll('.weeks button').forEach(b=>b.onclick=()=>{const wk=b.dataset.week;const last=store.get('tab'+wk,HDR[wk].first);showTab(document.getElementById(last)?last:HDR[wk].first)});
+
+/* ---------- chart helpers ---------- */
+function axes(svg,xl,yl){S('line',{x1:50,y1:330,x2:540,y2:330,stroke:'var(--ink)','stroke-width':1.2},svg);S('line',{x1:50,y1:330,x2:50,y2:12,stroke:'var(--ink)','stroke-width':1.2},svg);S('text',{x:540,y:352,'text-anchor':'end'},svg,xl);S('text',{x:58,y:22},svg,yl)}
+function scale(d0,d1,r0,r1){return v=>r0+(v-d0)/(d1-d0)*(r1-r0)}
+
+/* ---------- generic: flashcards ---------- */
+function makeFlashcards(root,CARDS,key){
+  root.innerHTML=`<div class="chips"></div><div class="cardzone"><div class="fcard" tabindex="0" role="button" aria-label="Flip card"><div class="face front"><div class="topic"></div><div class="term"></div><div class="hint">Tap to reveal</div></div><div class="face back"><div class="topic"></div><div class="def"></div></div></div><div class="progress"></div><div class="btns"><button class="btn" data-a="again">Again</button><button class="btn primary" data-a="got">Got it</button><button class="btn" data-a="shuffle">Shuffle</button><button class="btn" data-a="reset">Reset progress</button></div></div>`;
+  const q=s=>root.querySelector(s),card=q('.fcard');
+  const topics=['All',...new Set(CARDS.map(c=>c[0]))];
+  let topic=store.get(key+'Topic','All');if(!topics.includes(topic))topic='All';
+  let known=new Set(store.get(key+'Known',[])),queue=[],qi=0;
+  const inTopic=i=>topic==='All'||CARDS[i][0]===topic;
+  function chips(){const c=q('.chips');c.innerHTML='';topics.forEach(t=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.setAttribute('aria-pressed',t===topic);b.onclick=()=>{topic=t;store.set(key+'Topic',t);chips();build()};c.appendChild(b)})}
+  function build(sh){const ids=CARDS.map((c,i)=>i).filter(inTopic);const unk=ids.filter(i=>!known.has(i));const base=unk.length?unk:ids;queue=sh?shuffle(base):base;qi=0;show()}
+  function show(){card.classList.remove('flipped');const ids=CARDS.map((c,i)=>i).filter(inTopic);const kn=ids.filter(i=>known.has(i)).length;const c=CARDS[queue[qi]];
+    root.querySelectorAll('.topic')[0].textContent=c[0];root.querySelectorAll('.topic')[1].textContent=c[1];q('.term').textContent=c[1];q('.def').textContent=c[2];
+    q('.progress').textContent=`Card ${qi+1} of ${queue.length} in this pass · ${kn} of ${ids.length} known`+(kn===ids.length?' · deck complete, reviewing everything':'')}
+  const flip=()=>card.classList.toggle('flipped');
+  card.onclick=flip;card.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();flip()}};
+  const next=()=>{qi++;if(qi>=queue.length)build(true);else show()};
+  const save=()=>store.set(key+'Known',[...known]);
+  root.querySelector('[data-a=got]').onclick=()=>{known.add(queue[qi]);save();next()};
+  root.querySelector('[data-a=again]').onclick=()=>{known.delete(queue[qi]);save();queue.push(queue[qi]);next()};
+  root.querySelector('[data-a=shuffle]').onclick=()=>build(true);
+  root.querySelector('[data-a=reset]').onclick=()=>{known=new Set();save();build()};
+  chips();build();
+}
+
+/* ---------- generic: sorting rounds ---------- */
+function makeSort(root,ROUNDS,key){
+  root.innerHTML='<div class="chips"></div><div class="q"></div>';
+  const chipsEl=root.querySelector('.chips'),box=root.querySelector('.q');
+  let round=Object.keys(ROUNDS)[0],items=[],i=0,score=0;
+  function chips(){chipsEl.innerHTML='';Object.keys(ROUNDS).forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.setAttribute('aria-pressed',r===round);b.onclick=()=>{round=r;chips();start()};chipsEl.appendChild(b)})}
+  function start(){items=shuffle(ROUNDS[round].items);i=0;score=0;render()}
+  function render(){
+    if(i>=items.length){const k=key+'Best_'+round,best=store.get(k,0);if(score>best)store.set(k,score);box.innerHTML=`<div class="qnum">Round complete</div><div class="score">${score} / ${items.length}</div><p class="sub">Best so far: ${Math.max(best,score)} / ${items.length}</p><button class="btn primary">Play again</button>`;box.querySelector('button').onclick=start;return}
+    const it=items[i],cats=ROUNDS[round].cats;
+    box.innerHTML=`<div class="qnum">${i+1} of ${items.length} · score ${score}</div><div class="statement"></div><div class="opts${cats.length>3?' grid':''}"></div><div class="fbz"></div>`;
+    box.querySelector('.statement').textContent=it[0];
+    const opts=box.querySelector('.opts');
+    cats.forEach(c=>{const b=document.createElement('button');b.className='opt';b.textContent=c;b.onclick=()=>{const ok=c===it[1];if(ok)score++;[...opts.children].forEach(x=>{x.disabled=true;if(x.textContent===it[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      box.querySelector('.fbz').innerHTML=`<div class="fb ${ok?'right':'wrong'}"><strong>${ok?'Correct.':'It\'s '+it[1]+'.'}</strong>${it[2]}</div><div class="btns" style="margin-top:12px"><button class="btn primary">Next</button></div>`;
+      const nb=box.querySelector('.fbz button');nb.onclick=()=>{i++;render()};nb.focus()};opts.appendChild(b)});
+  }
+  chips();start();
+}
+
+/* ---------- generic: quiz ---------- */
+function makeQuiz(root,QUIZ,key){
+  let qs=[],n=0,score=0;
+  function start(){qs=shuffle(QUIZ);n=0;score=0;render()}
+  function render(){
+    if(n>=qs.length){const best=store.get(key+'Best',0);if(score>best)store.set(key+'Best',score);const r=score/qs.length;const msg=r>=.85?'Exam-ready on this week.':r>=.6?'Solid. Revisit the flashcards you marked "Again".':'Go back through the labs and notes, then try again.';
+      root.innerHTML=`<div class="q"><div class="qnum">Finished</div><div class="score">${score} / ${qs.length}</div><p class="sub">${msg} Best so far: ${Math.max(best,score)} / ${qs.length}.</p><button class="btn primary">Try again</button></div>`;root.querySelector('button').onclick=start;return}
+    const q=qs[n];
+    root.innerHTML=`<div class="q"><div class="qnum">Question ${n+1} of ${qs.length} · score ${score}</div><div class="qtext"></div><div class="opts"></div><div class="fbz"></div></div>`;
+    root.querySelector('.qtext').textContent=q[0];
+    const opts=root.querySelector('.opts');
+    q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>{const ok=j===q[2];if(ok)score++;[...opts.children].forEach((x,k)=>{x.disabled=true;if(k===q[2])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      root.querySelector('.fbz').innerHTML=`<div class="fb ${ok?'right':'wrong'}"><strong>${ok?'Correct.':'Not quite.'}</strong>${q[3]}</div><div class="btns" style="margin-top:12px"><button class="btn primary">${n+1<qs.length?'Next question':'See score'}</button></div>`;
+      const nb=root.querySelector('.fbz button');nb.onclick=()=>{n++;render()};nb.focus()};opts.appendChild(b)});
+  }
+  start();
+}
+
+/* ================= WEEK 6 LABS ================= */
+const sras={trail:[40],c:3};
+const sxY=Y=>50+Y/115*480, syP=P=>330-P/80*305;
+const srasP=Y=>20+sras.c*Y/(108-Y);
+function eqm(A){let lo=0,hi=107.9;for(let i=0;i<60;i++){const m=(lo+hi)/2;if(srasP(m)-(A-0.5*m)>0)hi=m;else lo=m}const Y=(lo+hi)/2;return{Y,P:srasP(Y)}}
+function drawSras(){
+  const svg=$('srasSvg');svg.innerHTML='';axes(svg,'Real GDP','Price level');
+  S('line',{x1:sxY(100),y1:24,x2:sxY(100),y2:330,stroke:'var(--muted)','stroke-width':1.5,'stroke-dasharray':'6 4'},svg);
+  S('text',{x:sxY(100)+6,y:36,class:'lbl',style:'fill:var(--muted)'},svg,'LRAS');
+  let pts=[];for(let Y=0;Y<107.9;Y+=0.4){const P=srasP(Y);if(P>78)break;pts.push(sxY(Y).toFixed(1)+','+syP(P).toFixed(1))}
+  S('polyline',{points:pts.join(' '),fill:'none',stroke:'var(--accent)','stroke-width':3},svg);
+  const last=pts[pts.length-1].split(',');S('text',{x:+last[0]-8,y:+last[1]+4,'text-anchor':'end',class:'lbl',style:'fill:var(--accent)'},svg,'SRAS');
+  const letters='ABCDEFGH';
+  sras.trail.forEach((A,i)=>{
+    const cur=i===sras.trail.length-1;
+    const y0=Math.min(A,78),Y0=(A-y0)/0.5,P1=Math.max(A-0.5*112,2),Y1=(A-P1)/0.5;
+    S('line',{x1:sxY(Y0),y1:syP(y0),x2:sxY(Math.min(Y1,112)),y2:syP(A-0.5*Math.min(Y1,112)),stroke:'var(--ad)','stroke-width':cur?2.5:1.2,opacity:cur?1:.4},svg);
+    S('text',{x:sxY(Y0)+4,y:syP(y0)+14,style:'fill:var(--ad)',opacity:cur?1:.6},svg,'AD'+(i+1));
+    const e=eqm(A);
+    if(cur){S('line',{x1:50,y1:syP(e.P),x2:sxY(e.Y),y2:syP(e.P),stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);S('line',{x1:sxY(e.Y),y1:syP(e.P),x2:sxY(e.Y),y2:330,stroke:'var(--muted)','stroke-dasharray':'3 3'},svg)}
+    S('circle',{cx:sxY(e.Y),cy:syP(e.P),r:cur?6:4.5,fill:cur?'var(--ink)':'var(--surface)',stroke:'var(--ink)','stroke-width':1.5},svg);
+    S('text',{x:sxY(e.Y)-8,y:syP(e.P)-10,'text-anchor':'end',class:'lbl',style:'fill:var(--ink)'},svg,letters[i]);
+  });
+  $('srasTable').innerHTML=sras.trail.map((A,i)=>{const e=eqm(A),p=i?eqm(sras.trail[i-1]):null;return`<tr><td><b>${letters[i]}</b></td><td class="num">${e.Y.toFixed(1)}</td><td class="num">${e.P.toFixed(1)}</td><td class="num">${p?'+'+(e.Y-p.Y).toFixed(1):'–'}</td><td class="num">${p?'+'+(e.P-p.P).toFixed(1):'–'}</td></tr>`}).join('');
+  const e=eqm(sras.trail[sras.trail.length-1]),z=$('srasZone');
+  if(e.Y<72){z.className='note';z.innerHTML='<b>Lots of spare capacity.</b> High unemployment, flat SRAS. More AD mostly raises output, so fiscal stimulus works well here.'}
+  else if(e.Y<92){z.className='note';z.innerHTML='<b>Spare capacity is shrinking.</b> The SRAS is steepening, so each rise in AD brings more inflation and less extra output.'}
+  else{z.className='note warn';z.innerHTML='<b>Close to potential.</b> More AD now mostly raises prices. A fiscal stimulus during an upswing just adds inflation.'}
+  $('adUp').disabled=sras.trail.length>=8;
+}
+$('adUp').onclick=()=>{const from=sras.trail[sras.trail.length-1];sras.trail.push(from);animate(from,from+10,500,v=>{sras.trail[sras.trail.length-1]=v;drawSras()})};
+$('adReset').onclick=()=>{sras.trail=[40];drawSras()};
+$('stick').oninput=e=>{const s=+e.target.value;sras.c=6-4.5*s/100;$('stickLbl').textContent=s<34?'low (more flexible, steeper)':s<67?'medium':'high (flatter)';drawSras()};
+drawSras();
+
+const lab={W:70,s:0,mode:'neo',busy:false};
+const sxL=L=>50+L/110*480, syW=W=>330-W/100*305;
+const Ld=W=>lab.s+(90-W)/0.8, Ls=W=>(W-10)/0.8;
+const WE=()=>10+0.8*(50+lab.s/2), LE=()=>50+lab.s/2;
+function drawLab(){
+  const svg=$('labSvg');svg.innerHTML='';axes(svg,'Quantity of labour','Wage rate');
+  const dl0=Math.max(0,lab.s-12.5),dl1=Math.min(110,lab.s+90/0.8);
+  S('line',{x1:sxL(dl0),y1:syW(90-0.8*(dl0-lab.s)),x2:sxL(dl1),y2:syW(90-0.8*(dl1-lab.s)),stroke:'var(--accent)','stroke-width':3},svg);
+  const dlx=Math.min(dl1,104);S('text',{x:sxL(dlx)-4,y:syW(90-0.8*(dlx-lab.s))+20,'text-anchor':'end',class:'lbl',style:'fill:var(--accent)'},svg,lab.s>0.5?'DL₂':'DL');
+  S('line',{x1:sxL(0),y1:syW(10),x2:sxL(110),y2:syW(98),stroke:'var(--sl)','stroke-width':3},svg);
+  S('text',{x:sxL(106),y:syW(94.8)+22,'text-anchor':'end',class:'lbl',style:'fill:var(--sl)'},svg,'SL');
+  const we=WE(),le=LE();
+  S('line',{x1:50,y1:syW(we),x2:sxL(le),y2:syW(we),stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);
+  S('line',{x1:sxL(le),y1:syW(we),x2:sxL(le),y2:330,stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);
+  S('circle',{cx:sxL(le),cy:syW(we),r:5,fill:'var(--surface)',stroke:'var(--ink)','stroke-width':1.5},svg);
+  S('text',{x:44,y:syW(we)+4,'text-anchor':'end'},svg,'Wᴱ');S('text',{x:sxL(le),y:346,'text-anchor':'middle'},svg,'Qᴱ');
+  const W=lab.W,ld=Ld(W),ls=Ls(W);
+  if(Math.abs(W-we)>0.6){
+    S('line',{x1:50,y1:syW(W),x2:sxL(Math.max(ld,ls)),y2:syW(W),stroke:'var(--ad)','stroke-width':2},svg);
+    S('text',{x:44,y:syW(W)+4,'text-anchor':'end',style:'fill:var(--ad)'},svg,'W¹');
+    S('circle',{cx:sxL(ld),cy:syW(W),r:5,fill:'var(--accent)'},svg);S('circle',{cx:sxL(ls),cy:syW(W),r:5,fill:'var(--sl)'},svg);
+    const lo=Math.min(ld,ls),hi=Math.max(ld,ls);
+    S('line',{x1:sxL(lo),y1:syW(W)-16,x2:sxL(hi),y2:syW(W)-16,stroke:'var(--ad)','stroke-width':1.2},svg);
+    S('text',{x:(sxL(lo)+sxL(hi))/2,y:syW(W)-24,'text-anchor':'middle',class:'lbl',style:'fill:var(--ad)'},svg,W>we?'Unemployment':'Labour shortage');
+  }
+  $('wage').value=Math.round(W);$('wageLbl').textContent='€'+W.toFixed(0)+(Math.abs(W-we)<0.6?' (equilibrium)':'');
+  const u=Math.max(0,ls-ld);
+  $('sLd').textContent=ld.toFixed(0);$('sLs').textContent=ls.toFixed(0);$('sU').textContent=u.toFixed(0);
+  const rate=ls>0?u/ls:0;$('gapBar').style.width=Math.min(100,rate*160)+'%';
+  $('gap').textContent=u<0.5?'AD is high enough. The economy is at or near potential GDP (LRAS).':`unemployment of ${(rate*100).toFixed(0)}% keeps AD low, so the economy sits to the left of the LRAS.`;
+}
+function labMsg(html,warn){const n=$('labNote');n.className='note'+(warn?' warn':'');n.innerHTML=html}
+function defaultMsg(){const we=WE();if(lab.W>we+0.6)labMsg(lab.mode==='neo'?'<b>Neoclassical view:</b> markets correct themselves. Press "Let the market adjust" to see the wage fall.':'<b>Keynesian view:</b> wages are sticky. Press "Let the market adjust" and see what happens.');else if(lab.W<we-0.6)labMsg('Below equilibrium, firms want more workers than are available. That\'s a labour shortage, which pushes wages up.');else labMsg('<b>Equilibrium.</b> DL = SL, the market clears and there\'s no pressure on wages.')}
+function setMode(m){lab.mode=m;$('mNeo').setAttribute('aria-pressed',m==='neo');$('mKey').setAttribute('aria-pressed',m==='key');$('gov').classList.remove('pulse');defaultMsg()}
+$('mNeo').onclick=()=>setMode('neo');$('mKey').onclick=()=>setMode('key');
+$('wage').oninput=e=>{lab.W=+e.target.value;$('gov').classList.remove('pulse');drawLab();defaultMsg()};
+$('adjust').onclick=()=>{if(lab.busy)return;const we=WE();
+  if(Math.abs(lab.W-we)<0.6){labMsg('Already at equilibrium. Raise the wage with the slider first.');return}
+  if(lab.mode==='neo'||lab.W<we){lab.busy=true;animate(lab.W,we,1200,v=>{lab.W=v;drawLab()},()=>{lab.busy=false;labMsg(lab.mode==='neo'?'<b>Self-correction.</b> The excess supply of labour pushed the wage down to Wᴱ with no government involvement. Employment recovers, AD rises and the economy moves towards its LRAS.':'<b>Wages rose to clear the shortage.</b>')})}
+  else{labMsg('<b>Nothing happens.</b> Wages are sticky: workers who still have jobs won\'t accept a pay cut, even with an excess supply of labour. Unemployment persists and AD stays too low. Keynesians say the government has to step in.',true);$('gov').classList.add('pulse')}};
+$('gov').onclick=()=>{if(lab.busy)return;$('gov').classList.remove('pulse');const W=lab.W;
+  if(W<=WE()+0.6){labMsg('With no unemployment, extra spending just adds inflation (the steep part of the SRAS).',true);return}
+  const target=(2*W-100)/0.8;lab.busy=true;
+  animate(lab.s,target,1200,v=>{lab.s=v;drawLab()},()=>{lab.busy=false;labMsg(lab.mode==='key'?'<b>Fiscal stimulus.</b> Government spending shifts AD right through the multiplier. Firms produce more, so DL shifts right until unemployment is gone at the existing wage.':'<b>It works, but neoclassicals object.</b> They argue stimulus signals higher inflation and distorts the market\'s self-correcting mechanisms, causing instability.')})};
+$('labReset').onclick=()=>{lab.W=70;lab.s=0;$('gov').classList.remove('pulse');drawLab();defaultMsg()};
+drawLab();defaultMsg();
+
+/* ================= WEEK 6 DATA ================= */
+const CARDS6=[
+['SRAS','Short run aggregate supply (SRAS)','The total output firms will produce and sell at each price level in the short run. It slopes upward because higher prices raise profits.'],
+['SRAS','Slope of the SRAS','How responsive output is to changes in the price level. Steeper means less responsive, flatter means more responsive.'],
+['SRAS','Sticky wage theory','Nominal wages are fixed by contracts or norms. An unexpected rise in prices raises revenue but not wage costs, so profit per unit rises and firms hire more and produce more. The reverse happens when prices fall.'],
+['SRAS','Sticky price theory (menu costs)','Changing prices is costly (menus, catalogues, labels). Firms that don\'t raise prices become relatively cheaper than rivals, so they sell more and expand production.'],
+['SRAS','Misperceptions theory','Firms mistake a rise in the general price level for a rise in their own relative price, so they produce more. When they realise all prices (including costs) rose, output falls back.'],
+['SRAS','Flat vs steep SRAS','Flat means more stickiness: a small price change brings a big output change. Steep means more flexibility, and the curve also steepens near full capacity as resources become scarce.'],
+['SRAS','Fiscal stimulus near potential','On the steep part of the SRAS, more AD mainly raises prices, not GDP. Governments shouldn\'t use a fiscal stimulus during an upswing.'],
+['SRAS','Keynesian / neo-Keynesian view','Economies can get stuck to the left of the LRAS with persistent unemployment. The SRAS is flat, so fiscal stimulus raises output and employment well.'],
+['SRAS','Neoclassical view','Markets are flexible and self-correcting and don\'t get stuck in recession. Fiscal stimulus signals inflation, distorts self-correction and creates instability.'],
+['Labour market','Labour market diagram','Wage rate on the vertical axis, quantity of labour on the horizontal. Equilibrium wage Wᴱ is where DL = SL and the market clears.'],
+['Labour market','Diminishing marginal returns to labour','With capital, land and technology fixed, each extra worker adds less output. Firms hire while marginal revenue ≥ wage, so they only hire more at a lower wage.'],
+['Labour market','Substitution effect (labour demand)','Higher wages make labour expensive relative to capital, so firms substitute capital for labour (e.g. Gen AI replacing routine tasks).'],
+['Labour market','Output effect (labour demand)','Labour is a derived demand. Higher wages → higher costs → higher prices → fewer goods demanded → less labour needed.'],
+['Labour market','Derived demand','Demand for labour depends on demand for the goods and services that labour produces.'],
+['Labour market','Market vs individual labour supply','An individual\'s supply can bend backwards (more leisure at high wages), but the market SL slopes up because higher wages draw new workers in.'],
+['Labour market','Wage above equilibrium (W¹)','Labour demanded < labour supplied. The excess labour is unemployment, which means lower AD and an economy to the left of the LRAS.'],
+['Labour market','Neoclassical fix for unemployment','The excess supply of labour pushes wages down to Wᴱ over time without government intervention. AD rises towards the LRAS.'],
+['Labour market','Keynesian fix for unemployment','Sticky wages leave the market in disequilibrium. Government spending shifts AD right (multiplier), which raises DL and cuts unemployment.'],
+['Structures','Collective bargaining','Negotiation between employers and a group of workers (usually a union) over wages and conditions.'],
+['Structures','Coverage rate vs share of employees covered','The share covered is larger because firms that didn\'t bargain adopt the bargained wage. Paying less would leave them unable to recruit.'],
+['Structures','Informal employment (OECD)','Jobs that, in law or practice, sit outside labour legislation, income tax, social protection or employment benefits.'],
+['Structures','Macro problems of informality','A smaller tax base, low productivity, poor access to finance, weak social protection, inequality, poor data, weaker policy tools and lower trust in institutions.'],
+['Structures','Union wage premium','Higher wages that unions win for members through collective bargaining power. Even the threat of unionisation can raise wages.'],
+['Structures','Human capital & education premium','Education and training raise productivity, so employers pay more. Technology favours skilled workers, which widens inequality.'],
+['Structures','Efficiency wage theory','Firms pay above equilibrium to raise effort, reduce shirking and turnover, and attract better applicants. The result is an excess supply of labour.'],
+['Structures','Segmented Labour Markets Model','Predicts that a higher minimum wage → formal job losses → workers move to the informal sector → informal wages fall → inequality rises.'],
+['Structures','Lighthouse effect','Evidence shows that a higher formal minimum wage often raises informal wages too. Formal job losses are typically very small.'],
+['Structures','Labour force participation rate','People aged 16+ who are employed or actively seeking work ÷ the civilian working-age population. Ireland (2023): 65.5%.'],
+];
+const ROUNDS6={
+ 'Keynesian or neoclassical?':{cats:['Keynesian','Neoclassical'],items:[
+  ['Economies can get stuck at an equilibrium to the left of the LRAS.','Keynesian','Keynesians argue economies can be stuck with persistent unemployment.'],
+  ['Markets are flexible and correct themselves.','Neoclassical','Neoclassicals argue markets contain their own mechanisms to return to potential.'],
+  ['The SRAS tends to be flat, so firms respond to more AD with more output.','Keynesian','A flat SRAS is why Keynesians think fiscal stimulus works.'],
+  ['Expansionary fiscal policy signals higher inflation and creates instability.','Neoclassical','Neoclassicals say stimulus distorts self-correction.'],
+  ['Unemployed workers push wages down to Wᴱ over time.','Neoclassical','Wages adjust downwards in a competitive labour market.'],
+  ['Workers holding jobs won\'t accept wage cuts, so unemployment persists.','Keynesian','Sticky wages keep the labour market in disequilibrium.'],
+  ['Government spending is needed to raise AD and labour demand.','Keynesian','Keynesians use the multiplier to shift AD and DL right.'],
+  ['Recessions don\'t last because the economy has internal mechanisms to recover.','Neoclassical','Self-correction is the core neoclassical idea.']]},
+ 'Which SRAS theory?':{cats:['Sticky wages','Sticky prices','Misperceptions'],items:[
+  ['A restaurant keeps its old menu prices because reprinting costs money, and gets busier as rivals raise theirs.','Sticky prices','Menu costs make some output prices slow to change.'],
+  ['Prices rise but wages are fixed by a two-year contract, so the firm adds overtime.','Sticky wages','Revenue rises while labour costs stay fixed, so profit per unit rises.'],
+  ['A farmer sees grain prices rise and plants more, then realises fertiliser costs rose just as much.','Misperceptions','The farmer mistook a general price rise for a rise in their relative price.'],
+  ['Prices fall unexpectedly while wages stay put, so firms cut production.','Sticky wages','Lower revenue with fixed wages cuts profit, so output falls.'],
+  ['A catalogue retailer only updates prices once a year.','Sticky prices','The cost of changing prices keeps them sticky.'],
+  ['A firm thinks demand for its product has risen, but every price in the economy went up.','Misperceptions','Confusing the general price level with a relative price.']]},
+ 'Why does DL slope down?':{cats:['Diminishing returns','Substitution effect','Output effect'],items:[
+  ['Wages rise, so a bank replaces routine admin staff with Gen AI tools.','Substitution effect','Labour got more expensive relative to capital.'],
+  ['A café with one coffee machine hires a fifth barista who mostly waits for the machine.','Diminishing returns','Fixed capital means each extra worker adds less output.'],
+  ['Higher wages push up car prices, fewer cars sell, and the factory needs fewer workers.','Output effect','Labour is a derived demand.'],
+  ['A warehouse buys automated sorters after a wage rise.','Substitution effect','Swapping relatively cheaper capital for labour.'],
+  ['Workers start getting in each other\'s way on a fixed production line.','Diminishing returns','The marginal product of labour falls.'],
+  ['Restaurant prices rise after a wage increase, so diners eat out less and fewer staff are needed.','Output effect','Lower product demand means lower labour demand.']]}
+};
+const QUIZ6=[
+['As AD keeps rising along the SRAS from A to D, what happens?',['Price rises shrink and GDP gains grow','Price rises grow and GDP gains shrink','Both stay constant','GDP falls'],1,'Near potential, spare capacity shrinks, so firms respond with higher prices rather than more output.'],
+['A flatter SRAS curve implies…',['Greater flexibility of wages and prices','Greater stickiness of wages and prices','The economy is at full capacity','The LRAS has shifted'],1,'More stickiness means a small change in the price level causes a large change in output.'],
+['Under sticky wage theory, an unexpected rise in the price level leads firms to…',['Cut output, because wages rise','Expand output, because profit per unit rises','Raise wages immediately','Do nothing'],1,'Revenue rises while wage costs are fixed for a period, so profit per unit rises and firms hire or add overtime.'],
+['"Menu costs" are used to explain…',['Sticky wages','Sticky prices','Misperceptions','Diminishing returns'],1,'The cost of changing prices (menus, catalogues, labels) keeps some output prices sticky.'],
+['When is expansionary fiscal policy most effective, according to the notes?',['When the economy is close to potential','When unemployment is high and there is spare capacity','During an upswing','When the SRAS is vertical'],1,'On the flat part of the SRAS, more AD mostly raises output with little inflation.'],
+['Which is NOT a reason the demand for labour curve slopes down?',['Diminishing marginal returns','Substitution effect','Output effect','Backward-bending labour supply'],3,'The backward-bending curve is about an individual\'s labour supply, not firms\' demand.'],
+['"Labour is a derived demand" is the basis of the…',['Substitution effect','Output effect','Lighthouse effect','Efficiency wage theory'],1,'Higher wages raise prices, which cuts demand for goods and therefore for the labour that makes them.'],
+['Why does the market labour supply curve slope up even if an individual\'s can bend backwards?',['Higher wages draw new workers into the market','Firms demand more labour at higher wages','Minimum wages force it upward','Unions restrict supply'],0,'Across the market, higher wages pull more people in.'],
+['At a wage above equilibrium (W¹), the gap between labour supplied and labour demanded is…',['A labour shortage','Unemployment','The union wage premium','Informal employment'],1,'Excess labour supply is unemployment, which in turn means lower AD.'],
+['How does a Keynesian explain persistent unemployment at W¹?',['Wages fall too quickly','Sticky wages: workers won\'t accept wage cuts','Firms over-hire','Too much government spending'],1,'Wages don\'t adjust down, so the labour market stays in disequilibrium and AD stays too low.'],
+['Why is the share of employees covered by bargaining larger than the bargaining coverage rate?',['Informal workers are counted twice','Non-bargaining firms copy the bargained wage to be able to recruit','Unions inflate the figures','Minimum wages count as bargaining'],1,'Competition makes firms in a sector match the bargained wage, even if they weren\'t part of the bargaining.'],
+['Which statement about trade union density is supported by the ILO data in the notes?',['It always rises with development','Botswana (30%) is higher than Germany (16%)','The USA is highest at 59%','Uganda has no unions'],1,'Density isn\'t simply higher in more developed economies: Finland 59%, Botswana 30%, Germany 16%, USA and Uganda 10%.'],
+['Ireland\'s informal employment rate in the ILO profile is about…',['3.4%','24.5%','52.5%','68.6%'],0,'Ireland 3.4% (2023). 52.5% is its share of workers with advanced education.'],
+['Efficiency wage theory predicts that firms paying above equilibrium will cause…',['A labour shortage','An excess supply of labour','Lower productivity','More informal jobs'],1,'Above-equilibrium wages attract more workers than firms hire.'],
+['What does the empirical evidence on minimum wages mostly show?',['Large formal job losses and falling informal wages','Small formal job losses, and informal wages often rise (lighthouse effect)','No effect on wages at all','Minimum wages alone end poverty'],1,'This contradicts the Segmented Labour Markets Model. Minimum wages help, but they need cash transfers, bargaining and social protection alongside them.']
+];
+/* keep the original week-six storage keys */
+makeFlashcards($('fc6'),CARDS6,'');makeSort($('so6'),ROUNDS6,'sort');makeQuiz($('qz6'),QUIZ6,'quiz');
+
+const valid=id=>id&&document.getElementById(id)&&document.getElementById(id).tagName==='SECTION'?id:null;
+showTab(valid(location.hash.slice(1))||valid(store.get('tab6',''))||'sras');
+</script>
+</body>
+</html>
